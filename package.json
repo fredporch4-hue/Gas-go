@@ -1,0 +1,3 @@
+{ "name": "gasbuddy-test-server", "version": "1.0.0", "private": true,
+  "scripts": { "start": "node test-server.js", "signal": "node signal-server.js", "reset": "node -e \"require('fs').rmSync('data.json',{force:true})\"" },
+  "dependencies": { "ws": "^8.18.0" } }

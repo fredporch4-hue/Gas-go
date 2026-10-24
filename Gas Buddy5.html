@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Gas Buddy">
+<meta name="theme-color" content="#faf8f5" media="(prefers-color-scheme: light)"><meta name="theme-color" content="#151413" media="(prefers-color-scheme: dark)"><meta name="color-scheme" content="light dark"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"><title>Gas Buddy</title>
+<style>
+:root{--bg:#f6f4f0;--card:#fff;--text:#1d1b19;--muted:#7a746c;--line:#e8e3dc;--acc:#e8590c;--accsoft:#fff0e6;--ok:#2f9e44;--warn:#e03131;--gold:#b8860b;--goldsoft:#fdf5d8;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#151413;--card:#201e1c;--text:#f3efe9;--muted:#a09a91;--line:#34302c;--acc:#ff8a4c;--accsoft:#3a2418;--ok:#51cf66;--warn:#ff6b6b;--gold:#f2c94c;--goldsoft:#3a3216}}
+:root[data-theme="dark"]{--bg:#151413;--card:#201e1c;--text:#f3efe9;--muted:#a09a91;--line:#34302c;--acc:#ff8a4c;--accsoft:#3a2418;--ok:#51cf66;--warn:#ff6b6b;--gold:#f2c94c;--goldsoft:#3a3216}
+*{box-sizing:border-box}html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--text);font:16px/1.4 -apple-system,system-ui,"Segoe UI",Roboto,sans-serif;padding:16px 16px 96px;max-width:520px;margin:0 auto}
+h1{font-size:22px;margin:0}h2{font-size:17px;margin:20px 0 8px}p{margin:0}
+.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.muted{color:var(--muted);font-size:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;margin-bottom:12px}
+.row{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.btn{background:var(--acc);color:#fff;border:0;border-radius:12px;padding:10px 16px;font:600 15px inherit;font-family:inherit;cursor:pointer}
+.btn.ghost{background:var(--accsoft);color:var(--acc)}.btn.gold{background:var(--gold);color:#fff}
+.btn.full{width:100%;padding:13px}.btn:disabled{opacity:.5}
+.badge{font-size:12px;font-weight:700;padding:3px 8px;border-radius:99px;background:var(--goldsoft);color:var(--gold)}
+.gauge{text-align:center;position:relative}.gauge .pct{position:absolute;left:0;right:0;top:78px;font-size:40px;font-weight:800}
+.gauge .sub{position:absolute;left:0;right:0;top:124px;font-size:13px;color:var(--muted)}
+.alert{background:#fff0f0;color:var(--warn);border:1px solid var(--warn);border-radius:12px;padding:12px;margin-bottom:12px;font-weight:600}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .alert{background:#3a1a1a}}
+.stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;text-align:center}
+.stats b{display:block;font-size:18px}
+nav{position:fixed;left:0;right:0;bottom:0;display:flex;background:var(--card);border-top:1px solid var(--line);padding:8px 8px calc(8px + env(safe-area-inset-bottom,0px));max-width:520px;margin:0 auto}
+nav button{flex:1;background:none;border:0;color:var(--muted);font:600 12px inherit;font-family:inherit;padding:4px;cursor:pointer}
+nav button span{display:block;font-size:22px}nav button.on{color:var(--acc)}
+.bar{height:8px;background:var(--line);border-radius:9px;overflow:hidden;margin:8px 0}.bar i{display:block;height:100%;background:var(--gold)}
+select{width:100%;padding:11px;border-radius:12px;border:1px solid var(--line);background:var(--bg);color:var(--text);font-size:15px;margin-bottom:10px}
+.feat{background:linear-gradient(135deg,var(--goldsoft),var(--card));border-color:var(--gold)}
+ul.f{padding-left:20px;margin:8px 0 14px}ul.f li{margin:4px 0}
+.inp{width:100%;padding:11px;border-radius:12px;border:1px solid var(--line);background:var(--bg);color:var(--text);font-size:15px;margin-bottom:10px;font-family:inherit}.chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}.av{width:38px;height:38px;border-radius:50%;background:var(--acc);color:#fff;border:0;font:700 16px inherit;font-family:inherit}.bars{display:flex;gap:6px;align-items:flex-end;height:70px;margin-top:10px}.bars div{flex:1;background:var(--accsoft);border-radius:6px 6px 0 0;position:relative}.bars i{position:absolute;bottom:0;left:0;right:0;background:var(--acc);border-radius:6px 6px 0 0}.pill{font-size:12px;font-weight:700;padding:3px 8px;border-radius:99px}.hero{color:#fff;border-radius:20px;padding:16px;margin:12px 0;box-shadow:0 10px 30px rgba(0,0,0,.18);animation:up .5s ease}
+@keyframes up{from{opacity:0;transform:translateY(8px)}}@keyframes rg{from{stroke-dashoffset:176}}@keyframes sh{0%{background-position:200% 0}100%{background-position:-200% 0}}@keyframes gw{from{width:0}}
+.ring{position:relative;width:64px;height:64px;text-align:center;flex:none}.ring b{position:absolute;left:0;right:0;top:15px;font-size:18px}.ring span{position:absolute;left:0;right:0;top:37px;font-size:9px;opacity:.85}
+.chip{border:1px solid var(--line);background:var(--bg);color:var(--text);border-radius:99px;padding:6px 12px;font:600 13px inherit;font-family:inherit}
+.tb{display:flex;align-items:center;gap:8px;font-size:13px;margin:7px 0}.tb span{width:84px;color:var(--muted)}.tb div{flex:1;height:8px;border-radius:9px;background:var(--line);overflow:hidden}.tb i{display:block;height:100%;border-radius:9px;background:linear-gradient(90deg,#7c3aed,#06b6d4);animation:gw 1s ease-out}
+@media (prefers-reduced-motion:reduce){*{animation:none!important}}
+.btn,.chip,.card,nav button{transition:transform .15s,background .2s,box-shadow .2s}.btn:active,.chip:active,nav button:active{transform:scale(.96)}
+#app:not(.nk)>*{animation:up .4s ease both}#app>*:nth-child(2){animation-delay:.05s}#app>*:nth-child(3){animation-delay:.1s}#app>*:nth-child(4){animation-delay:.15s}#app>*:nth-child(n+5){animation-delay:.2s}
+nav{background:color-mix(in srgb,var(--card) 82%,transparent);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px)}
+nav button span{display:inline-block;position:relative;transition:all .25s}nav button.on span{background:var(--accsoft);border-radius:14px;padding:0 18px}
+nav button em{position:absolute;top:-3px;right:6px;background:var(--warn);color:#fff;font:700 10px/1 inherit;border-radius:99px;padding:3px 5px;font-style:normal}
+.ic{width:38px;height:38px;border-radius:50%;border:1px solid var(--line);background:var(--card);font-size:17px}
+.chip.on{background:var(--acc);color:#fff;border-color:var(--acc)}
+.wc{border-radius:20px;padding:18px;margin-bottom:12px;color:#fff;background:radial-gradient(circle at 85% 0,#ffb27a 0,transparent 45%),linear-gradient(135deg,#e8590c,#7a1f5c);box-shadow:0 12px 28px rgba(232,89,12,.3);animation:up .5s ease}
+.cyl{display:flex;align-items:center;gap:16px}.cyl .pc{font-size:46px;font-weight:800;line-height:1}
+.w1{animation:wv 3s linear infinite}@keyframes wv{to{transform:translateX(80px)}}
+.qa{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px}.qa button{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:12px 4px;color:var(--text);font:600 12px inherit;font-family:inherit}.qa span{display:block;font-size:22px;margin-bottom:4px}
+.trk{display:flex;align-items:center;margin:12px 0 4px}.trk .d{width:12px;height:12px;border-radius:50%;background:var(--line);flex:none}.trk .d.on{background:var(--acc);box-shadow:0 0 0 4px var(--accsoft)}.trk .l{flex:1;height:3px;background:var(--line)}.trk .l.on{background:var(--acc)}
+.trl{display:flex;justify-content:space-between;font-size:11px;color:var(--muted)}
+.ov{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:20;animation:fi .2s}.sht{position:fixed;left:0;right:0;bottom:0;background:var(--card);border-radius:22px 22px 0 0;padding:18px 18px calc(18px + env(safe-area-inset-bottom,0px));z-index:21;max-width:520px;margin:0 auto;animation:su .28s ease}
+@keyframes su{from{transform:translateY(100%)}}@keyframes fi{from{opacity:0}}
+.grab{width:40px;height:4px;border-radius:9px;background:var(--line);margin:0 auto 12px}.sr{display:flex;justify-content:space-between;padding:9px 0;border-top:1px solid var(--line)}
+.cf{position:fixed;left:50%;top:62%;font-size:22px;pointer-events:none;z-index:30;animation:fly 1.2s ease-out forwards}@keyframes fly{to{transform:translate(var(--x),var(--y)) rotate(var(--r));opacity:0}}
+.toast{backdrop-filter:blur(8px);box-shadow:0 8px 24px rgba(0,0,0,.25);animation:up .25s ease}
+.toast{position:fixed;left:16px;right:16px;bottom:90px;background:var(--text);color:var(--bg);padding:12px;border-radius:12px;text-align:center;max-width:488px;margin:0 auto;z-index:5}
+.cm{height:260px;overflow:auto;background:var(--bg);border-radius:12px;padding:10px;display:flex;flex-direction:column;gap:6px}
+.b{max-width:80%;padding:8px 11px;border-radius:14px;font-size:14px}.b.c{align-self:flex-end;background:var(--acc);color:#fff}.b.v{align-self:flex-start;background:var(--card);border:1px solid var(--line)}.b.s{align-self:center;color:var(--muted);font-size:12px}
+.code{font:800 26px ui-monospace,monospace;letter-spacing:8px;text-align:center}
+
+html{scroll-behavior:smooth;-webkit-tap-highlight-color:transparent}body{font-feature-settings:"tnum";-webkit-font-smoothing:antialiased;letter-spacing:-.005em}
+h2{font-size:12px;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);margin:24px 2px 10px}
+.card{border-radius:20px;border-color:color-mix(in srgb,var(--line) 70%,transparent);box-shadow:0 1px 2px rgba(0,0,0,.04),0 8px 24px -12px rgba(0,0,0,.14)}
+.card.row[onclick],.card:has([onclick]){cursor:pointer}.card:hover{box-shadow:0 2px 4px rgba(0,0,0,.05),0 14px 30px -12px rgba(0,0,0,.2)}
+.btn{background:linear-gradient(180deg,color-mix(in srgb,var(--acc) 88%,#fff),var(--acc));box-shadow:0 6px 14px -6px color-mix(in srgb,var(--acc) 70%,transparent),inset 0 1px 0 rgba(255,255,255,.25);border-radius:14px;min-height:44px}
+.btn.ghost{background:var(--accsoft);box-shadow:none}.btn.gold{background:linear-gradient(180deg,#d4a017,var(--gold))}
+.btn:focus-visible,.chip:focus-visible,.ic:focus-visible,nav button:focus-visible{outline:3px solid color-mix(in srgb,var(--acc) 45%,transparent);outline-offset:2px}
+.inp:focus,select:focus{outline:0;border-color:var(--acc);box-shadow:0 0 0 4px color-mix(in srgb,var(--acc) 18%,transparent)}
+.inp,select{border-radius:14px;padding:13px}.chip{padding:8px 14px;min-height:36px}.chip.on{box-shadow:0 4px 12px -4px color-mix(in srgb,var(--acc) 70%,transparent)}
+.ic{min-width:44px;height:44px;transition:transform .15s,color .2s}.ic:active{transform:scale(1.25)}
+.sht{border-radius:26px 26px 0 0;box-shadow:0 -20px 50px rgba(0,0,0,.25);max-height:88vh;overflow:auto}.ov{backdrop-filter:blur(3px)}
+.grab{width:44px;height:5px}nav{border-top:0;box-shadow:0 -10px 30px -14px rgba(0,0,0,.25)}
+nav button.on{font-weight:800}.toast{border-radius:16px;font-weight:600}.sr b{font-variant-numeric:tabular-nums}
+.stats>div{background:var(--bg);border-radius:14px;padding:10px 4px}.stats .muted{font-size:11px}
+.kgbox{display:flex;gap:8px;margin:10px 0 4px}.kgbox .inp{flex:1;margin:0}.kgbox .btn{white-space:nowrap}.chips{flex-wrap:wrap}@keyframes rise{from{opacity:0;transform:translateY(8px)}}@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+#lowpop{position:fixed;left:50%;top:max(16px,env(safe-area-inset-top));transform:translateX(-50%);z-index:99999;display:flex;gap:10px;align-items:center;width:min(92vw,380px);background:#c92a2a;color:#fff;padding:14px 16px;border-radius:16px;box-shadow:0 14px 36px -8px rgba(201,42,42,.55);animation:lowpop 2.8s ease both;pointer-events:none}@keyframes lowpop{0%{opacity:0;transform:translate(-50%,-16px) scale(.96)}10%{opacity:1;transform:translate(-50%,0) scale(1)}75%{opacity:1}100%{opacity:0;transform:translate(-50%,-6px)}}
+@keyframes shake{20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
+
+/* ===== Premium design layer v2 ===== */
+:root{--acc:#d9480f;--accsoft:#fff1e8;--on-acc:#fff;--bg:#faf8f5;--text:#1a1816;--muted:#6b655d;--line:#ece7e0;--ok:#2b8a3e;--r:20px;--sh:0 1px 2px rgba(26,24,22,.04),0 12px 32px -18px rgba(26,24,22,.18);--ease:cubic-bezier(.22,1,.36,1);--font:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--on-acc:#1b0f08;--sh:0 1px 0 rgba(255,255,255,.04) inset,0 14px 34px -18px rgba(0,0,0,.7)}}
+:root[data-theme="dark"]{--on-acc:#1b0f08;--sh:0 1px 0 rgba(255,255,255,.04) inset,0 14px 34px -18px rgba(0,0,0,.7)}
+body{font-family:var(--font);font-size:15px;line-height:1.5;padding:20px 16px 112px;font-feature-settings:"tnum","cv11","ss01"}
+button,input,select,textarea{font-family:var(--font)}
+h1{font-size:22px;font-weight:700;letter-spacing:-.025em}
+h2{font-size:11.5px;font-weight:600;letter-spacing:.1em;margin:28px 4px 10px}
+.muted{font-size:13.5px;line-height:1.45}
+b{font-weight:600}
+.top{margin-bottom:18px}
+.brand{display:flex;align-items:center;gap:10px}
+.mk{display:grid;place-items:center;width:34px;height:34px;border-radius:11px;background:var(--acc);color:var(--on-acc);box-shadow:0 6px 14px -6px var(--acc)}
+.mk svg{width:19px;height:19px}
+.card{border-radius:var(--r);padding:18px;margin-bottom:12px;box-shadow:var(--sh);border:1px solid var(--line)}
+@media(hover:hover){.card:hover{transform:none}}
+.btn{background:var(--acc);color:var(--on-acc);font:600 15px/1 var(--font);min-height:48px;padding:0 18px;border-radius:14px;box-shadow:0 8px 16px -10px var(--acc);letter-spacing:-.01em;display:inline-flex;align-items:center;justify-content:center;gap:8px}
+.btn.full{width:100%}
+.btn.ghost{background:var(--accsoft);color:var(--acc);box-shadow:none}
+.btn.gold{background:var(--gold);color:#fff}
+.btn:disabled{opacity:.45;pointer-events:none}
+.btn:active,.chip:active,.qa button:active,nav button:active{transform:scale(.97)}
+.chip{font:600 13.5px/1 var(--font);min-height:40px;padding:0 15px;border-radius:99px;transition:all .2s var(--ease)}
+.chip.on{background:var(--acc);color:var(--on-acc);border-color:var(--acc);box-shadow:0 6px 14px -8px var(--acc)}
+.inp,select{font-size:16px;min-height:50px;padding:0 14px;border-radius:14px;background:var(--card);border:1.5px solid var(--line);transition:border-color .2s,box-shadow .2s}
+textarea.inp{padding:12px 14px;min-height:88px;line-height:1.45}
+.inp::placeholder{color:var(--muted);opacity:.8}
+.inp:focus,select:focus{border-color:var(--acc);box-shadow:0 0 0 4px color-mix(in srgb,var(--acc) 16%,transparent)}
+:focus-visible{outline:2.5px solid var(--acc);outline-offset:2px;border-radius:12px}
+.ic,.av{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;padding:0;transition:transform .15s,background .2s}
+.ic{background:var(--card);color:var(--text)}.ic svg{width:20px;height:20px}
+.av{background:linear-gradient(145deg,var(--acc),#a8360a);color:var(--on-acc);font-weight:700}
+.top .row{gap:10px}
+.qa{gap:10px;margin-bottom:14px}
+.qa button{border-radius:18px;padding:14px 4px 12px;font:600 12px var(--font);box-shadow:var(--sh);transition:transform .15s}
+.qa span{width:42px;height:42px;margin:0 auto 8px;border-radius:14px;background:var(--accsoft);color:var(--acc);display:grid;place-items:center}
+.qa svg{width:20px;height:20px}
+.stats>div{background:var(--bg);border-radius:14px;padding:12px 4px}.stats b{font-size:17px;font-weight:700;letter-spacing:-.02em}
+.pill,.badge{font-size:11.5px;font-weight:600;padding:4px 9px;letter-spacing:.01em}
+.alert{border-radius:16px;padding:14px;font-weight:600;font-size:14px}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .alert{background:#3a1a1a}}
+:root[data-theme="dark"] .alert{background:#3a1a1a}
+.wc{border-radius:24px;padding:20px;box-shadow:0 18px 36px -18px rgba(217,72,15,.55)}
+.wc p[data-v]{font-size:40px!important;letter-spacing:-.035em}
+.hero{border-radius:24px;padding:20px}
+.cyl .pc{font-size:48px;letter-spacing:-.04em}
+.sr{padding:12px 0}.sr b{font-variant-numeric:tabular-nums}
+nav{padding:6px 10px calc(8px + env(safe-area-inset-bottom,0px));box-shadow:0 -1px 0 var(--line),0 -16px 32px -20px rgba(0,0,0,.2);background:color-mix(in srgb,var(--card) 86%,transparent);-webkit-backdrop-filter:saturate(180%) blur(20px);backdrop-filter:saturate(180%) blur(20px)}
+nav button{font:600 11px/1.2 var(--font);min-height:56px;letter-spacing:.01em;display:flex;flex-direction:column;align-items:center;gap:3px;border-radius:14px}
+nav button span{display:grid;place-items:center;width:58px;height:30px;border-radius:15px;font-size:0;transition:background .25s var(--ease),color .2s}
+nav button span svg{width:22px;height:22px}
+nav button.on span{background:var(--accsoft);padding:0;color:var(--acc)}
+nav button.on{color:var(--acc);font-weight:700}
+nav button em{top:-4px;right:2px;font:700 10px/1 var(--font);min-width:17px;text-align:center;box-shadow:0 0 0 2px var(--card)}
+.sht{border-radius:28px 28px 0 0;padding:14px 20px calc(20px + env(safe-area-inset-bottom,0px))}
+.sht .grab{margin-bottom:16px}
+.ov{background:rgba(10,8,6,.5)}
+#toast .toast{bottom:calc(92px + env(safe-area-inset-bottom,0px));border-radius:16px;font-size:14px;padding:13px 16px;font-weight:500;box-shadow:0 14px 34px -10px rgba(0,0,0,.4)}
+.b{font-size:14.5px;line-height:1.4}.cm{border-radius:16px}
+.code{letter-spacing:.35em;font-weight:700}
+.trk .d.on{box-shadow:0 0 0 5px var(--accsoft)}
+#app>*{animation-duration:.45s;animation-timing-function:var(--ease)}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+
+/* ===== v3: states, desktop, confirm ===== */
+.card.muted{text-align:center;padding:28px 18px;border-style:dashed;box-shadow:none;background:transparent}
+.sk{border-radius:12px;background:linear-gradient(90deg,var(--line) 25%,color-mix(in srgb,var(--line) 50%,var(--card)) 50%,var(--line) 75%);background-size:200% 100%;animation:sh 1.4s linear infinite}
+#offb{font-weight:600;letter-spacing:.01em;padding:8px!important}
+.cf-t{font-size:18px;font-weight:700;letter-spacing:-.02em}
+.btn.danger{background:var(--warn);color:#fff;box-shadow:none}
+@media(min-width:900px){body{max-width:640px;padding-top:36px}nav{max-width:640px;bottom:16px;border-radius:22px;box-shadow:var(--sh),0 0 0 1px var(--line)}.sht{max-width:640px;margin-bottom:0}#toast .toast{max-width:560px}}
+@media(max-width:360px){.qa{gap:6px}.stats b{font-size:15px}.btn{padding:0 14px}}
+.top .muted{padding-left:44px;margin-top:-2px}
+/* ===== v4: accessibility, contrast, restraint ===== */
+:root{--gold:#8a6508;--goldsoft:#fbf1cf}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--gold:#f2c94c;--goldsoft:#3a3216}:root:not([data-theme="light"]) .btn.gold{color:#1b1405}}
+:root[data-theme="dark"]{--gold:#f2c94c;--goldsoft:#3a3216}:root[data-theme="dark"] .btn.gold{color:#1b1405}
+.tb i{background:var(--acc)}
+.card:hover{box-shadow:var(--sh)}
+[role=button]{cursor:pointer}[role=button].card:hover{border-color:color-mix(in srgb,var(--acc) 35%,var(--line))}
+.sht{max-height:88vh;max-height:88dvh;overscroll-behavior:contain}.sht:focus{outline:0}
+button[id^=st]{min-width:44px;min-height:44px}
+nav button[aria-current=page]{color:var(--acc)}
+.vfi{display:inline-grid;place-items:center;width:56px;height:56px;border-radius:50%;background:rgba(255,255,255,.18);margin-bottom:6px}.vfi svg{width:28px;height:28px}
+.vfc{font-size:26px;font-weight:700;letter-spacing:.35em;text-align:center;font-variant-numeric:tabular-nums}.vfc::placeholder{font-size:16px;font-weight:500;letter-spacing:0}
+.cl{position:fixed;inset:0;z-index:90;display:grid;grid-template-rows:1fr auto;justify-items:center;padding:calc(env(safe-area-inset-top,0px) + 64px) 24px calc(env(safe-area-inset-bottom,0px) + 32px);background:linear-gradient(160deg,#2b1220,#7a1f5c);color:#fff;text-align:center}.cl:focus{outline:0}
+.cl .cav{width:96px;height:96px;border-radius:50%;display:grid;place-items:center;background:rgba(255,255,255,.16);font-size:40px;font-weight:700;margin:0 auto 16px}.cl .ca{display:flex;gap:16px;justify-content:center;flex-wrap:wrap}
+.vfe{color:#c92a2a;font-weight:600;font-size:14px;min-height:20px;margin:6px 0 2px}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .vfe{color:#ff8787}}:root[data-theme="dark"] .vfe{color:#ff8787}
+</style></head><body>
+<div id="app"></div><div id="toast" role="status" aria-live="polite"></div><div id="offb" style="display:none;position:fixed;top:0;left:0;right:0;z-index:99998;background:#343a40;color:#fff;text-align:center;padding:6px;font-size:13px">You are offline. Changes sync when you reconnect.</div><div id="sheet"></div><nav id="nav" aria-label="Primary"></nav>
+<script>
+var IC={home:"<svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round' aria-hidden='true'><path d='M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z'/></svg>",bag:"<svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round' aria-hidden='true'><path d='M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4zM3 6h18M16 10a4 4 0 0 1-8 0'/></svg>",box:"<svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round' aria-hidden='true'><path d='M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16zM3.27 6.96 12 12l8.73-5.04M12 22.08V12'/></svg>",wallet:"<svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round' aria-hidden='true'><path d='M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4'/></svg>",shield:"<svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round' aria-hidden='true'><path d='M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z'/></svg>",coin:"<svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round' aria-hidden='true'><path d='M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6'/></svg>",store:"<svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round' aria-hidden='true'><path d='M3 9 4.5 4h15L21 9M3 9v11h18V9M3 9h18M9 20v-6h6v6'/></svg>",help:"<svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round' aria-hidden='true'><circle cx='12' cy='12' r='10'/><circle cx='12' cy='12' r='4'/><path d='m4.93 4.93 4.24 4.24M14.83 9.17l4.24-4.24M14.83 14.83l4.24 4.24M9.17 14.83l-4.24 4.24'/></svg>",moon:"<svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round' aria-hidden='true'><path d='M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9z'/></svg>",sun:"<svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round' aria-hidden='true'><circle cx='12' cy='12' r='4'/><path d='M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41'/></svg>",flame:"<svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round' aria-hidden='true'><path d='M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.07-2.14-.22-4.05 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.15.43-2.29 1-3a2.5 2.5 0 0 0 2.5 2.5z'/></svg>"};
+var vendors=[
+{id:1,n:"Sunrise Gas Depot",d:0.6,r:4.8,rn:212,pk:1408,t:"20 min",e:"🏪",c:"#e8590c",a:"14 Market Road, Eastside",h:"7am to 9pm",since:2016,o:3420,own:"Tunde Bello",b:"Family-run depot with certified cylinders and fast, careful delivery.",rv:[["Amaka",5,"Arrived in 15 minutes and checked the seal in front of me.","2 weeks ago"],["Dele",5,"Fair price, polite rider.","1 month ago"]]},
+{id:2,n:"Neighbourhood LPG",d:1.2,r:4.5,rn:148,pk:1280,t:"35 min",e:"🛢️",c:"#1c7ed6",a:"7 Palm Avenue, Central",h:"8am to 8pm",since:2018,o:2105,own:"Grace Okoro",b:"Affordable refills for the whole neighbourhood. Cash-free and always on time.",rv:[["Segun",4,"Good value. Delivery was a little slow on Sunday.","3 weeks ago"],["Ify",5,"Always reliable.","2 months ago"]]},
+{id:3,n:"FlameKing Supplies",d:1.9,r:4.7,rn:176,pk:1344,t:"45 min",e:"🔥",c:"#c92a2a",a:"52 Station Street, Northgate",h:"6am to 10pm",since:2014,o:4870,own:"Musa Ibrahim",b:"Established supplier with safety-tested cylinders and open late.",rv:[["Chidi",5,"Opens early, which saved my morning.","1 week ago"],["Tola",4,"Solid service.","1 month ago"]]},
+{id:4,n:"Mama Ade Gas Hub",d:2.4,r:4.3,rn:96,pk:1216,t:"1 hr",e:"🏠",c:"#2f9e44",a:"3 Garden Close, Westend",h:"9am to 6pm",since:2020,o:980,own:"Adebisi Adeyemi",b:"Small friendly hub with the lowest prices around.",rv:[["Kemi",4,"Cheapest in the area and honest.","2 weeks ago"],["Bayo",4,"Slower, but worth it for the price.","2 months ago"]]}];
+vendors.forEach(function(v){v.p=v.pk*12.5});
+var S={tab:"home",user:null,level:68,hist:[5,7,4,6,5,6,0],orders:[],bal:0,tx:[],maint:[],cases:[],pre:{},smart:null,reviews:[],ai:{},theme:"auto",topup:null};
+try{var sv=localStorage.getItem("gasbuddy2");if(sv)S=Object.assign(S,JSON.parse(sv));}catch(e){}
+if(S.topup&&S.topup.m=="crypto")S.topup=null;
+if(!S.sv)S.sv=null;S.orders=(S.orders||[]).filter(function(o){if(o.smart){if(o.st=="pending"&&!S.sv)S.sv={t:o.t,st:"pending"};return false}return true});if(S.tab=="vip")S.tab="home";if(S.sv&&S.sv.vid==null){S.sv.vid=svVendor().id;S.sv.step=S.sv.st=="delivered"?4:0;S.sv.ts=S.sv.ts||[S.sv.t]}
+function save(){if(DB){clearTimeout(dbT);dbT=setTimeout(flushState,700);return}try{localStorage.setItem("gasbuddy2",JSON.stringify(S));if(S.user)localStorage.setItem("gb_u_"+S.user.id,JSON.stringify(S))}catch(e){}}
+function $(i){return document.getElementById(i)}
+function esc(x){return String(x).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
+function m(n){return "₦"+Math.round(n).toLocaleString("en-NG")}
+function dt(t){return new Date(t).toLocaleDateString(undefined,{day:"numeric",month:"short"})}
+var FEE={rate:0.02},DELIVERY=500;function dfee(a){return a>0?DELIVERY:0}function fee(a){return a>0?Math.round(a*FEE.rate):0}function cost(v,k){return Math.round(v.pk*k)}function feeNote(){return "2% service fee"}
+function toast(x){$("toast").innerHTML='<div class="toast">'+x+'</div>';setTimeout(function(){$("toast").innerHTML=""},2400)}
+function hap(){try{navigator.vibrate&&navigator.vibrate(12)}catch(e){}}
+function go(t){S.tab=t;hap();render()}
+function isDark(){return S.theme=="dark"||(S.theme!="light"&&window.matchMedia&&matchMedia("(prefers-color-scheme: dark)").matches)}
+function applyTheme(){document.documentElement.setAttribute("data-theme",S.theme||"auto")}
+function theme(){S.theme=isDark()?"light":"dark";applyTheme();save();render(true)}
+function burst(){if(window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches)return;var e=["🔥","✨","🎉","⭐"],h="";for(var i=0;i<22;i++)h+='<span class="cf" style="--x:'+((Math.random()-.5)*340)+'px;--y:'+(-Math.random()*320-40)+'px;--r:'+(Math.random()*540-270)+'deg">'+e[i%4]+'</span>';var d=document.createElement("div");d.innerHTML=h;document.body.appendChild(d);setTimeout(function(){d.remove()},1300)}
+function closeSheet(){$("sheet").innerHTML=""}
+function order(id,kg){var v0=vendor(id);if(v0&&v0.closed){toast(v0.n+" is closed right now");return}var v=v0,k=kg||cap(),p=cost(v,k),f=dfee(p),tot=p+f,ok=tot<=avail(),an=kg?' style="animation:none"':'';hap();
+$("sheet").innerHTML='<div class="ov"'+an+' onclick="closeSheet()"></div><div class="sht"'+an+'><div class="grab"></div><div class="row" style="justify-content:flex-start;gap:12px;margin-bottom:8px">'+pic(v,48)+'<div><b>Confirm order</b><p class="muted">'+esc(v.n)+'</p></div></div><p class="muted" style="margin-bottom:6px">How much gas do you need?</p><div class="chips">'+[3,5,6,12.5,25,50].map(function(x){return '<button class="chip'+(x==k?' on':'')+'" onclick="order('+id+','+x+')">'+x+' kg</button>'}).join("")+'</div>'+kgBox(id,1,k)+'<div class="sr"><span class="muted">Price per kg</span><b>'+m(v.pk)+'</b></div><div class="sr"><span class="muted">'+k+' kg x '+m(v.pk)+'</span><b>'+m(p)+'</b></div><div class="sr"><span class="muted">Delivery fee</span><b>'+m(f)+'</b></div><div class="sr"><span class="muted">Total</span><b>'+m(tot)+'</b></div><div class="sr"><span class="muted">Delivery to</span><b style="text-align:right">'+esc(S.user.addr)+'</b></div><div class="sr"><span class="muted">Arrives in</span><b>'+v.t+'</b></div><div class="sr"><span class="muted">Wallet after delivery</span><b style="color:'+(ok?'var(--text)':'var(--warn)')+'">'+m(S.bal-tot)+'</b></div><div id="lowm"></div><div style="height:12px"></div><button class="btn full" onclick="payGas('+id+','+k+')">Pay · '+m(tot)+'</button>'+'<button class="btn ghost full" style="margin-top:8px" onclick="closeSheet()">Cancel</button></div>'}
+function cap(){return S.user?S.user.cap:12.5}
+function vendor(id){return vendors.filter(function(v){return v.id==id})[0]}
+function reports(n){return S.cases.filter(function(c){return c.vendor==n&&c.kind=="Report"}).length}
+function held(){return S.orders.filter(function(o){return o.st=="pending"}).reduce(function(a,o){return a+(o.price||0)+(o.fee||0)},0)}function avail(){return S.bal-held()}function tx(l,a,f){S.tx.unshift({id:Date.now()+Math.random(),l:l,a:a,f:f||0,t:Date.now()});S.bal+=a}
+function signup(){var n=$("sn").value.trim(),p=$("sp").value.trim(),a=$("sa").value.trim();if(!n||!p||!a){toast("Please fill in all fields");return}
+S.user={name:n,phone:p,addr:a,cap:parseFloat($("sc").value),id:"GB-"+Math.floor(10000+Math.random()*89999),joined:Date.now()};save();render()}
+function saveProfile(){S.user.name=$("sn").value.trim()||S.user.name;S.user.phone=$("sp").value.trim()||S.user.phone;S.user.addr=$("sa").value.trim()||S.user.addr;S.user.cap=parseFloat($("sc").value);save();toast("Profile saved");render()}
+function signout(){hap();$("sheet").innerHTML='<div class="ov" onclick="closeSheet()"></div><div class="sht"><div class="grab"></div><b style="font-size:18px">Sign out?</b><p class="muted" style="margin:6px 0 14px">'+(DB?'You can log back in any time. Your data stays saved on the server.':'You can log back in any time on this device with your phone number and password.')+'</p><button class="btn full" onclick="doSignout()">Sign out</button><button class="btn ghost full" style="margin-top:8px" onclick="closeSheet()">Cancel</button></div>'}
+function doSignout(){if(DB){flushState(true);TOKEN="";MKC={vendors:[],jobs:[]};MKSIG="";try{localStorage.removeItem("gb_token")}catch(e){}}try{localStorage.removeItem("gasbuddy2")}catch(e){}S={tab:"home",user:null,level:68,hist:[5,7,4,6,5,6,0],orders:[],bal:0,tx:[],maint:[],cases:[],pre:{},smart:null,sv:null,fav:[],reviews:[],ai:{},theme:S.theme||"auto",topup:null};vk=null;favOnly=false;closeSheet();window.scrollTo(0,0);render()}
+function sAlert(x){S.smart.alerts.unshift({t:Date.now(),x:x});S.smart.alerts=S.smart.alerts.slice(0,5)}
+function cook(){var s=S.smart;if(s&&!s.valve){toast("Valve is closed. Open it to cook.");return}
+S.level=Math.max(0,S.level-6);S.hist[6]+=6;
+if(s&&s.auto&&S.level<=s.thr&&!S.orders.some(function(o){return o.st=="pending"&&o.auto})){var v=vendors[0],k=cap(),p=cost(v,k),f=dfee(p);
+if(p+f>avail())sAlert("Auto-reorder failed: wallet balance too low");else{S.orders.unshift(arm({id:Date.now(),v:v.n,kg:k,price:p,fee:f,eta:v.t,st:"pending",auto:true,t:Date.now()},45*6e4));sAlert("Auto-reorder placed with "+v.n);toast("Smart auto-reorder placed")}}
+save();render()}
+function simLeak(){var s=S.smart;s.ppm=480;s.valve=false;sAlert("Gas leak detected. Valve closed automatically.");save();toast("Leak alert! Valve shut off");render()}
+function simHeat(){var s=S.smart;s.temp=68;s.valve=false;sAlert("High temperature detected. Valve closed automatically.");save();toast("Overheat alert! Valve shut off");render()}
+function clearHazard(){var s=S.smart;s.ppm=0;s.temp=27;sAlert("Hazard cleared. Valve stays closed until you reopen it.");save();render()}
+function toggleValve(){var s=S.smart;if(s.ppm>0||s.temp>60){toast("Clear the hazard first");return}s.valve=!s.valve;sAlert("Valve "+(s.valve?"opened":"closed")+" remotely");save();render()}
+function toggleAuto(){var s=S.smart;s.auto=!s.auto;sAlert("Auto-reorder "+(s.auto?"on at "+s.thr+"%":"off"));save();render()}
+function setThr(v){S.smart.thr=parseInt(v);save();toast("Reorder threshold set to "+v+"%")}
+function smartMini(){var s=S.smart;if(!s)return '';var bad=s.ppm>0||s.temp>60;
+return (bad?'<div class="alert">'+(s.ppm>0?'Gas leak detected. Ventilate and avoid flames.':'High temperature detected.')+' Valve closed. <button class="btn full" style="margin-top:8px" onclick="go(\'smart\')">Open smart controls</button></div>':'')+
+'<div class="card row" onclick="go(\'smart\')"><div><b>Smart valve · Online</b><p class="muted">Valve '+(s.valve?'open':'closed')+' · Leak '+(s.ppm?s.ppm+' ppm':'none')+' · '+s.temp+'°C</p></div><span class="pill" style="background:var(--goldsoft);color:var(--gold)">Smart</span></div>'}
+function smartPanel(){var s=S.smart;
+if(!s)return '<div class="card"><b>Smart valve</b><p class="muted" style="margin-top:4px">Smart features are locked. They unlock only with the hardware ID created after your smart valve is delivered: live monitoring, leak detection, remote shut-off and auto-reorder.</p></div>';
+var bad=s.ppm>0||s.temp>60,kg=(S.level*cap()/100+14.5).toFixed(1);
+function t(l,v,w){return '<div class="card" style="margin:0;text-align:center;padding:12px"><p class="muted">'+l+'</p><b style="font-size:20px;color:'+(w?'var(--warn)':'var(--text)')+'">'+v+'</b></div>'}
+return '<div class="card feat"><div class="row"><b>Smart valve '+s.id+'</b><span class="pill" style="background:var(--goldsoft);color:var(--ok)">● Online</span></div><p class="muted">Battery '+s.batt+'% · Firmware '+s.fw+' · Signal strong</p></div>'+hwCard(s)+
+(bad?'<div class="alert">'+(s.ppm>0?'Gas leak detected ('+s.ppm+' ppm).':'High temperature detected.')+' Valve closed automatically.<button class="btn full" style="margin-top:8px" onclick="clearHazard()">I have made it safe</button></div>':'')+
+'<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px">'+t('Total weight',kg+' kg')+t('Pressure',Math.round(480+s.temp*9)+' kPa')+t('Temperature',s.temp+'°C',s.temp>60)+t('Leak sensor',s.ppm?s.ppm+' ppm':'Clear',s.ppm>0)+'</div>'+
+'<div class="card"><div class="row"><div><b>Remote shut-off valve</b><p class="muted">Currently '+(s.valve?'open':'closed')+'. Closes by itself on a leak or overheating.</p></div><button class="btn '+(s.valve?'ghost':'')+'" onclick="toggleValve()">'+(s.valve?'Close':'Open')+'</button></div></div>'+
+'<div class="card"><div class="row"><div><b>Auto-reorder</b><p class="muted">Orders a refill for you when gas runs low.</p></div><button class="btn '+(s.auto?'':'ghost')+'" onclick="toggleAuto()">'+(s.auto?'On':'Off')+'</button></div><select style="margin:10px 0 0" onchange="setThr(this.value)">'+[10,15,20,30].map(function(x){return '<option value="'+x+'"'+(x==s.thr?' selected':'')+'>Reorder at '+x+'%</option>'}).join("")+'</select></div>'+
+'<div class="card"><b>Test safety alerts (demo)</b><div class="row" style="margin-top:10px"><button class="btn ghost" onclick="simLeak()">Simulate leak</button><button class="btn ghost" onclick="simHeat()">Simulate overheat</button></div></div>'+
+'<h2>Smart activity</h2>'+(s.alerts.length?s.alerts.map(function(a){return '<div class="card"><p>'+esc(a.x)+'</p><p class="muted">'+dt(a.t)+'</p></div>'}).join(""):'<p class="muted">No activity yet.</p>')}
+function rate(){var w=[1,1,1,2,2,3],a=0,b=0;for(var i=0;i<6;i++){a+=S.hist[i]*w[i];b+=w[i]}var r=a/b,t=S.hist[6];if(t>0)r=r*0.7+t*0.3;return Math.max(r,1)}
+
+function doOrder(id,kg){var v=vendor(id),k=kg||cap(),price=cost(v,k),f=dfee(price);if(avail()<price+f){toast("Insufficient funds. Your wallet balance is low.");return}closeSheet();hap();
+if(price+f>avail()){toast("Insufficient balance. Top up your wallet.");go("wallet");return}
+S.orders.unshift(arm({id:Date.now(),v:v.n,kg:k,price:price,fee:f,eta:v.t,st:"pending",t:Date.now()},Math.max(45,mins(v)+30)*6e4));pushJob(v,S.orders[0]);save();toast("Order placed. You will be charged when delivery is confirmed.");go("orders")}
+
+/* ---- Secure delivery: code, chat, call, timer ---- */
+var cOpen=null;
+function tl(ms){var t=Math.max(0,Math.floor(ms/1000)),h=Math.floor(t/3600);return h?h+"h "+Math.floor(t%3600/60)+"m":mmss(ms)}
+function newCode(){var u=S.orders.map(function(o){return o.code}),c;do{c=rnd(DG,6)}while(u.indexOf(c)>=0);return c}
+function arm(o,dur){o.code=newCode();o.exp=Date.now()+dur;o.att=0;o.chat=[{f:"v",x:"Thanks for your order! When I arrive, tap Delivered in your app to see your secret code and give it to me to complete the order.",t:Date.now()}];return o}
+function ens(o){if(!o.code)arm(o,45*6e4);if(!o.chat)o.chat=[]}
+function getO(id){return S.orders.filter(function(o){return o.id==id})[0]}
+function vByName(n){return vendors.filter(function(v){return v.n==n})[0]}
+function bub(x){return '<div class="b '+x.f+'">'+esc(x.x)+'</div>'}
+function drawChat(o){var e=$("cm");if(!e)return;e.innerHTML=o.chat.map(bub).join("");e.scrollTop=e.scrollHeight}
+function openChat(id){var o=getO(id),live=o.st=="pending";cOpen=id;
+$("sheet").innerHTML='<div class="ov" onclick="closeChat()"></div><div class="sht"><div class="grab"></div><div class="row"><b>'+esc(o.v)+'</b>'+(live?'<button class="btn ghost" onclick="openCall('+id+')">📞 Call</button>':'')+'</div><p class="muted" style="margin:2px 0 8px">'+(live?'Chat stays open until you confirm delivery.':'Chat closed. The transaction has ended.')+'</p><div class="cm" id="cm"></div>'+(live?'<div class="row" style="margin-top:8px"><input class="inp" id="ci" style="margin:0" placeholder="Message the vendor" onkeydown="if(event.key==\'Enter\')sendMsg('+id+')"><button class="btn" onclick="sendMsg('+id+')">Send</button></div>':'')+'</div>';drawChat(o)}
+function closeChat(){cOpen=null;closeSheet()}
+function sendMsg(id){var o=getO(id),i=$("ci"),x=i.value.trim();if(!x||o.st!="pending")return;i.value="";o.chat.push({f:"c",x:x,t:Date.now()});save();drawChat(o);if(o.jid){jobChat(o.jid,"c",x);return}
+setTimeout(function(){if(o.st!="pending")return;var q=x.toLowerCase(),r=/where|how long|eta|when|late|far/.test(q)?"I am on my way. Estimated arrival: "+o.eta+".":/address|location|find|gate|house/.test(q)?"Please confirm your address: "+S.user.addr+".":/code|pin|otp/.test(q)?"Your secret code appears in the app when you tap Delivered. Only give it to me once you have your gas.":"Noted 👍";
+o.chat.push({f:"v",x:r,t:Date.now()});save();if(cOpen==id)drawChat(o)},1200)}
+function openCode(id){var o=getO(id);cOpen=null;var lock=o.att>=3;
+$("sheet").innerHTML='<div class="ov" onclick="closeSheet()"></div><div class="sht"><div class="grab"></div><b>Confirm delivery</b><p class="muted" style="margin:4px 0 12px">Your 6-digit secret code is below. Time left: <b class="tmr" data-e="'+o.exp+'" style="color:var(--text)">'+tl(o.exp-Date.now())+'</b></p>'+
+(lock?'<div class="alert">The vendor entered a wrong code too many times. This order is locked. Please open a dispute.</div><button class="btn full" onclick="closeSheet();help(\''+esc(o.v)+'\',\''+o.id+'\')">Dispute or report</button>':
+'<div class="code" style="color:var(--acc);margin-bottom:6px">'+o.code+'</div><p class="muted" style="text-align:center;margin-bottom:12px">Give this code to the vendor only when you have your gas. They enter it on their device to complete the order.</p>'+(o.jid?'<p class="muted" style="text-align:center;margin-bottom:10px">The vendor enters this code in their app to finish the order.</p>':'<div class="card" style="margin:0 0 10px"><b>Vendor device (demo)</b><input class="inp code" id="cin" style="margin-top:8px" inputmode="numeric" maxlength="6" placeholder="••••••" autocomplete="off"><p class="muted" style="text-align:center;margin-bottom:10px">'+(3-o.att)+' attempts left</p><button class="btn full" onclick="checkCode('+id+')">Vendor confirms delivery</button></div>'))+
+'<button class="btn ghost full" style="margin-top:8px" onclick="closeSheet()">Cancel</button></div>'}
+function checkCode(id){var o=getO(id),v=$("cin").value.trim();if(o.st!="pending"||o.att>=3)return;
+if(v===o.code){o.chat.push({f:"s",x:"✅ Vendor entered your secret code. Delivery confirmed.",t:Date.now()});closeSheet();done(id,true);return}
+o.att++;save();hap();if(o.att>=3){openCode(id)}else{toast("Wrong code. "+(3-o.att)+" attempts left");$("cin").value="";openCode(id)}}
+/* ---- Hardware ID bound to one profile ---- */
+var HWK="gasbuddy_hw",HA="ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+function hwReg(){try{return JSON.parse(localStorage.getItem(HWK)||"{}")}catch(e){return{}}}
+function hwSave(r){try{localStorage.setItem(HWK,JSON.stringify(r))}catch(e){}}
+function hwSum(b){var a=0;for(var i=0;i<b.length;i++)a=(a*31+HA.indexOf(b[i])+1)%32;return HA[a]}
+function hwNew(){var r=hwReg(),b,id;do{b=rnd(HA,12);id="GBH-"+b.slice(0,4)+"-"+b.slice(4,8)+"-"+b.slice(8)+hwSum(b)}while(r.hasOwnProperty(id));return id}
+function hwStock(id){var r=hwReg();r[id]=S.user.id;hwSave(r)}
+function hwBind(id){var r=hwReg();if(r[id]&&r[id]!=S.user.id)return false;r[id]=S.user.id;hwSave(r);return true}
+function hwFor(o){var id=o.hw||hwNew();hwBind(id);return id}
+function mkSmart(hw){return{id:"SV-"+Math.floor(1000+Math.random()*8999),hw:hw,valve:true,auto:false,thr:20,ppm:0,temp:27,batt:96,fw:"2.4.1",alerts:[{t:Date.now(),x:"Smart valve activated at your address."}]}}
+function hwCard(s){if(!s.hw){s.hw=hwNew();hwBind(s.hw);save()}return '<div class="card"><div class="row"><div><b>Hardware ID</b><p class="muted" style="font-family:ui-monospace,monospace;margin-top:2px">'+s.hw+'</p></div><button class="chip" data-t="'+s.hw+'" onclick="cp(this.dataset.t)">Copy</button></div><p class="muted" style="margin-top:8px">🔒 Permanently locked to profile '+S.user.id+'. It cannot be transferred, shared or resold.</p></div>'}
+function linkCard(){return '<div class="card"><b>Link your smart valve</b><p class="muted" style="margin:4px 0 10px">Enter the hardware ID created after delivery. It works only for the profile that ordered it. Once activated it is locked to that profile for good and cannot be moved, shared or resold.</p><input class="inp" id="hwi" placeholder="GBH-XXXX-XXXX-XXXXX" autocapitalize="characters" autocomplete="off"><button class="btn full" onclick="linkHw()">Unlock smart valve</button></div>'}
+function linkHw(){var raw=$("hwi").value.trim().toUpperCase(),mt=raw.match(/^GBH-([A-HJ-NP-Z2-9]{4})-([A-HJ-NP-Z2-9]{4})-([A-HJ-NP-Z2-9]{4})([A-HJ-NP-Z2-9])$/);
+if(!mt||hwSum(mt[1]+mt[2]+mt[3])!=mt[4]){toast("Invalid hardware ID");return}
+var r=hwReg();if(!r.hasOwnProperty(raw)){toast("Unknown hardware ID");return}
+if(r[raw]&&r[raw]!=S.user.id){toast("This ID belongs to another profile. It cannot be used here.");return}
+if(!S.sv||S.sv.hw!==raw){toast("This ID was not issued to your profile");return}
+if(!hwBind(raw)){toast("Already linked to another profile. Cannot be used here.");return}
+S.smart=mkSmart(raw);S.sv=null;save();toast("Smart valve unlocked");burst();render()}
+setInterval(function(){if(!S.user)return;var n=Date.now(),ch=false;S.orders.forEach(function(o){if(o.st=="pending"&&o.exp&&o.exp<n){o.st="failed";ch=true;if(o.chat)o.chat.push({f:"s",x:"Order timed out. Transaction closed.",t:n});}});
+if(ch){save();cOpen=null;closeSheet();toast("An order timed out. You were not charged");render(true)}
+document.querySelectorAll(".tmr").forEach(function(e){e.textContent=tl(e.dataset.e-n)})},1000);
+function done(id,ok){S.orders.forEach(function(o){if(o.id==id){o.st=ok?"success":"failed";if(ok){S.level=100;if(o.price)tx("Refill: "+o.v+(o.kg?" ("+o.kg+" kg)":""),-o.price);if(o.fee)tx("Delivery fee: "+o.v,-o.fee);}}});save();toast(ok?"Delivered. Cylinder refilled.":"Marked unsuccessful. You were not charged.");if(ok)burst();render()}
+var favOnly=false;
+function isFav(id){return (S.fav||[]).indexOf(id)>=0}
+function toggleFav(id){S.fav=S.fav||[];var i=S.fav.indexOf(id);if(i>=0)S.fav.splice(i,1);else S.fav.push(id);save();hap();toast(i>=0?"Removed from saved vendors":"Vendor saved");render(true)}
+function toggleFavOnly(){favOnly=!favOnly;render(true)}
+function kgBox(id,sheet,k){var pre=[3,5,6,12.5,25,50].indexOf(k)>=0;return '<div class="kgbox"><input class="inp" id="'+(sheet?'ckg2':'ckg')+'" type="number" inputmode="decimal" min="0.5" max="100" step="0.5" placeholder="Or type your own kg (0.5 to 100)" value="'+(pre?'':k)+'"'+(sheet?' onkeydown="if(event.key==\'Enter\')customKg('+id+',1)"><button class="btn ghost" onclick="customKg('+id+',1)">Set kg</button>':' oninput="liveKg('+id+')">')+'</div>'}
+function liveKg(id){var el=$("ckg"),x=parseFloat(el.value);if(!(x>=0.5&&x<=100)){el.style.borderColor=el.value===""?"":"var(--warn)";return}el.style.borderColor="";applyKg(id,x)}
+function pickKg(id,x){var el=$("ckg");if(el){el.value="";el.style.borderColor=""}hap();applyKg(id,x)}
+function applyKg(id,x){x=Math.round(x*10)/10;var v=vendor(id),g=cost(v,x),f=dfee(g),t=g+f;vk={v:id,k:x};
+$("oq").textContent=x+" kg";$("ogL").textContent="Gas amount ("+x+" kg x "+m(v.pk)+")";$("og").textContent=m(g);$("of").textContent=m(f);$("ot").textContent=m(t);
+var b=$("obtn");b.textContent="Order "+x+" kg · "+m(t);b.setAttribute("onclick","order("+id+","+x+")");
+document.querySelectorAll("#odc .chip").forEach(function(c){c.classList.toggle("on",parseFloat(c.textContent)==x)})}
+function customKg(id,sheet){var x=parseFloat($(sheet?'ckg2':'ckg').value);if(!(x>=0.5&&x<=100)){toast("Enter between 0.5 and 100 kg");return}x=Math.round(x*10)/10;if(sheet)order(id,x);else setVk(id,x)}
+function reorder(n,kg){var v=vendors.filter(function(x){return x.n==n})[0];if(v)order(v.id,kg)}
+function receipt(id){var o=S.orders.filter(function(x){return x.id==id})[0],ppk=o.kg?o.price/o.kg:0,tot=(o.price||0)+(o.fee||0),r=function(l,x,b){return '<div class="sr"><span class="muted">'+l+'</span><b'+(b?' style="color:var(--acc);font-size:17px"':'')+'>'+x+'</b></div>'};
+var txt="Gas Buddy receipt\n"+o.v+"\n"+dt(o.t)+"\n"+o.kg+" kg x "+m(ppk)+" = "+m(o.price)+"\nDelivery fee: "+m(o.fee||0)+"\nTotal paid: "+m(tot);
+$("sheet").innerHTML='<div class="ov" onclick="closeSheet()"></div><div class="sht"><div class="grab"></div><b style="font-size:18px">🧾 Receipt</b><p class="muted">'+esc(o.v)+' · '+dt(o.t)+'</p><div style="height:6px"></div>'+r("Price per kg",m(ppk))+r("Quantity",o.kg+" kg")+r("Gas amount",m(o.price))+r("Delivery fee",m(o.fee||0))+r("Total paid",m(tot),1)+'<div style="height:12px"></div><button class="btn full" data-t="'+esc(txt)+'" onclick="cp(this.dataset.t)">Copy receipt</button>'+(navigator.share?'<button class="btn ghost full" style="margin-top:8px" data-t="'+esc(txt)+'" onclick="navigator.share({title:\'Gas Buddy receipt\',text:this.dataset.t}).catch(function(){})">Share receipt</button>':'')+'<button class="btn ghost full" style="margin-top:8px" onclick="closeSheet()">Close</button></div>'}
+function insights(){var d=S.orders.filter(function(o){return o.st=="success"&&o.price&&o.kg});if(!d.length)return '';var sp=0,kg=0,fe=0;d.forEach(function(o){sp+=o.price+(o.fee||0);kg+=o.kg;fe+=o.fee||0});
+return '<div class="card"><div class="row"><b>Your gas insights</b><span class="pill" style="background:var(--accsoft);color:var(--acc)">'+d.length+' deliveries</span></div><div class="stats" style="margin-top:12px"><div><b>'+m(sp)+'</b><span class="muted">Total spent</span></div><div><b>'+(Math.round(kg*10)/10)+' kg</b><span class="muted">Gas bought</span></div><div><b>'+m((sp-fe)/kg)+'</b><span class="muted">Avg per kg</span></div></div></div>'}
+var SV_VALVE=5000,SV_FEAT=5000,SV_STEPS=[["📝","Order placed","Your request was sent to the vendor"],["✅","Vendor accepted","The vendor confirmed your smart valve"],["📦","Valve picked up","The rider collected it from the vendor"],["🛵","Out for delivery","On the way to your address"],["🏠","Delivered","Your hardware ID is created"]];
+function hrs(h){var m=/(\d+)(am|pm) to (\d+)(am|pm)/.exec(h||"");if(!m)return[0,24];var f=function(n,a){n=+n%12;return a=="pm"?n+12:n};return[f(m[1],m[2]),f(m[3],m[4])]}
+function isOpen(v){if(v.closed)return false;var h=new Date().getHours(),r=hrs(v.h);return h>=r[0]&&h<r[1]}
+function svVendor(){var l=vendors.slice().sort(function(a,b){return a.d-b.d}),o=l.filter(isOpen);return (o[0]||l[0])}
+function reqSmart(){var tot=SV_VALVE+SV_FEAT;if(avail()<tot){toast("Insufficient funds. Your wallet balance is low.");return}var v=svVendor();tx("Smart valve (valve "+m(SV_VALVE)+" + smart features "+m(SV_FEAT)+") from "+v.n,-tot,0);S.sv={t:Date.now(),st:"pending",vid:v.id,step:0,ts:[Date.now()]};if(v.real){S.sv.jid=Date.now();mkUpd(function(m){m.jobs.unshift({jid:S.sv.jid,type:"valve",cid:S.user.id,cname:S.user.name,caddr:S.user.addr,vid:v.id,v:v.n,price:SV_VALVE,feat:SV_FEAT,st:"new",step:0,t:Date.now(),chat:[]})})}save();hap();toast("Order placed with "+v.n);render()}
+function lowBan(need){return avail()<need?'<div style="background:var(--warnsoft,#fff0f0);color:var(--warn);border-radius:12px;padding:10px 12px;font-weight:600;font-size:14px;margin:10px 0">⚠️ '+(avail()<=0?'Insufficient funds. Your wallet is empty.':'Insufficient balance. You need '+m(need-avail())+' more.')+' Top up to continue.</div>':""}
+function payGas(id,k){var v=vendor(id),t=cost(v,k)+dfee(cost(v,k));if(avail()<t){lowShow(t);return}doOrder(id,k)}
+function paySmart(){var t=SV_VALVE+SV_FEAT;if(avail()<t){lowShow(t);return}closeSheet();reqSmart()}
+function lowShow(t){var o=document.getElementById("lowpop");if(o)o.remove();var d=document.createElement("div");d.id="lowpop";d.setAttribute("role","alert");d.innerHTML='<span style="font-size:20px">⚠️</span><div><b>Insufficient funds</b><div style="font-weight:500;font-size:13px;opacity:.9">'+(avail()<=0?'Your wallet is empty.':'Your wallet balance is low. You need '+m(t-avail())+' more.')+'</div></div>';document.body.appendChild(d);hap();setTimeout(function(){d.remove()},2800)}
+function svSheet(){hap();var nv=svVendor(),ok=avail()>=SV_VALVE+SV_FEAT,r=function(l,x,b){return '<div class="sr"><span class="muted">'+l+'</span><b'+(b?' style="color:var(--acc);font-size:18px"':'')+'>'+x+'</b></div>'};
+$("sheet").innerHTML='<div class="ov" onclick="closeSheet()"></div><div class="sht"><div class="grab"></div><b style="font-size:18px">Smart valve order details</b><div class="row" style="justify-content:flex-start;gap:12px;margin:12px 0 4px">'+pic(nv,48)+'<div><b>'+esc(nv.n)+'</b><p class="muted" style="font-size:13px">Closest open vendor · '+nv.d+' km · arrives in '+nv.t+'</p></div></div>'+r("Smart valve (hardware)",m(SV_VALVE))+r("Smart features",m(SV_FEAT))+r("Total you pay",m(SV_VALVE+SV_FEAT),1)+r("Delivery to",esc(S.user.addr))+r("Wallet after payment",m(avail()-SV_VALVE-SV_FEAT))+'<div id="lowm"></div><div style="height:12px"></div><button class="btn gold full" onclick="paySmart()">Pay · '+m(SV_VALVE+SV_FEAT)+'</button>'+'<button class="btn ghost full" style="margin-top:8px" onclick="closeSheet()">Cancel</button></div>'}
+function svAuto(){var v=S.sv;if(!v||v.st!="pending"||v.jid)return false;var el=(Date.now()-v.t)/1000,st=el>=75?3:el>=40?2:el>=15?1:0,ch=false;while(v.step<st&&v.step<3){v.step++;v.ts[v.step]=Date.now();ch=true}if(ch)save();return ch}
+function svDone(){var v=S.sv;if(!v||v.step>=4)return;for(var i=v.step+1;i<=4;i++)v.ts[i]=Date.now();v.step=4;v.hw=hwNew();hwStock(v.hw);v.st="delivered";if(v.jid)mkUpd(function(m){m.jobs.forEach(function(j){if(j.jid==v.jid){j.st="delivered";j.step=4;j.dt=Date.now()}})});save();burst();hap();toast("Smart valve delivered. Your hardware ID is ready.");render(true)}
+setInterval(function(){if(S.user&&svAuto()&&S.tab=="smart")render(true)},3000);
+function svJourney(v){return '<div class="card"><b>Delivery journey</b><div style="margin-top:12px">'+SV_STEPS.map(function(x,i){var d=i<=v.step,c=i==v.step;return '<div style="display:flex;gap:12px;align-items:stretch"><div style="display:flex;flex-direction:column;align-items:center"><div style="width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-size:14px;background:'+(d?'var(--acc)':'var(--bg)')+';border:2px solid '+(d?'var(--acc)':'var(--line)')+(c&&i<4?';box-shadow:0 0 0 5px var(--accsoft)':'')+'">'+(d?(i<v.step||i==4?'✓':x[0]):x[0])+'</div>'+(i<4?'<div style="width:2px;flex:1;min-height:22px;background:'+(i<v.step?'var(--acc)':'var(--line)')+'"></div>':'')+'</div><div style="padding-bottom:14px"><b style="color:'+(d?'var(--text)':'var(--muted)')+'">'+x[1]+'</b><p class="muted" style="font-size:13px">'+(v.ts[i]?dt(v.ts[i]):x[2])+'</p></div></div>'}).join("")+'</div>'+(v.step<4?'<p class="muted" style="font-size:13px;margin:2px 0 10px">The vendor updates your journey. Tap Delivered once the valve reaches you.</p><button class="btn gold full" onclick="svDone()">Delivered</button>':'')+'</div>'}
+function svDetails(v){var vd=vendor(v.vid),r=function(l,x,b){return '<div class="sr"><span class="muted">'+l+'</span><b'+(b?' style="color:var(--acc);font-size:17px"':'')+'>'+x+'</b></div>'};return '<div class="card"><b>Order details</b><div class="row" style="justify-content:flex-start;gap:12px;margin:10px 0 4px">'+pic(vd,44)+'<div><b>'+esc(vd.n)+'</b><p class="muted" style="font-size:13px">'+vd.d+' km away · '+esc(vd.a)+'</p></div></div>'+r("Smart valve (hardware)",m(SV_VALVE))+r("Smart features",m(SV_FEAT))+r("Total paid",m(SV_VALVE+SV_FEAT),1)+r("Delivery to",esc(S.user.addr))+'</div>'}
+function help(v,o){S.pre={v:v||"",o:o||""};go("support")}
+function sendCase(){var d=$("cd").value.trim();if(!d){toast("Please describe the issue");return}
+var vv=vendors.filter(function(x){return x.n.toLowerCase()==$("cv").value.trim().toLowerCase()})[0];if(!vv){toast("Choose a vendor from the suggestions");vSuggest();return}
+S.cases.unshift({id:Date.now(),kind:$("ck").value,vendor:vv.n,type:$("ct").value,d:d,t:Date.now()});S.pre={};save();toast("Submitted. Our team will review it.");render()}
+function home(){var l=S.level,c=l<20?"var(--warn)":l<45?"var(--gold)":"var(--ok)",len=Math.PI*80,r=rate(),days=l/r,end=Date.now()+days*864e5,mx=Math.max.apply(null,S.hist.concat([1])),names=["6d","5d","4d","3d","2d","Yday","Today"];
+var bars=S.hist.map(function(x,i){return '<div style="height:'+Math.max(6,x/mx*100)+'%"><i style="height:'+(i==6?100:0)+'%"></i></div>'}).join("");
+return (l<20?'<div class="alert">Gas is running low ('+l+'%). <button class="btn full" style="margin-top:8px" onclick="go(\'order\')">Order a refill</button></div>':'')+
+cylCard()+quick()+
+smartMini()+insights()+'<div class="card"><b>Gas finish prediction</b><p style="font-size:26px;font-weight:800;color:'+(days<4?'var(--warn)':'var(--acc)')+';margin:6px 0 2px">'+(l>0?new Date(end).toLocaleDateString(undefined,{weekday:"short",day:"numeric",month:"short"}):"Empty")+'</p><p class="muted">About '+(days<1?'less than a day':days.toFixed(1)+' days')+' left, based on your usage of ~'+r.toFixed(1)+'% per day. Recent days count more.</p><div class="bars">'+bars+'</div><div class="row muted" style="font-size:11px;margin-top:4px"><span>7 days ago</span><span>Today</span></div></div>'+
+'<div class="card"><p class="muted" style="margin-bottom:10px">Demo: each tap simulates cooking. The sensor and prediction update live.</p><div class="row"><button class="btn ghost" onclick="cook()">Cook (−6%)</button><button class="btn" onclick="go(\'order\')">Order now</button></div></div>'}
+var rs=5;
+function userRev(v){return S.reviews.filter(function(x){return x.vid==v.id})}
+function rating(v){var u=userRev(v),sum=0;u.forEach(function(x){sum+=x.stars});return{r:(v.r*v.rn+sum)/(v.rn+u.length),n:v.rn+u.length}}
+function vOrders(v){return v.o+S.orders.filter(function(o){return o.v==v.n&&o.st=="success"}).length}
+function stars(n){var k=Math.round(n);return "★★★★★".slice(0,k)+"☆☆☆☆☆".slice(0,5-k)}
+function pic(v,z){return '<div style="width:'+z+'px;height:'+z+'px;border-radius:'+(z/3)+'px;background:'+v.c+';display:flex;align-items:center;justify-content:center;font-size:'+(z*0.5)+'px;flex:none">'+v.e+'</div>'}
+function mins(v){return v.t.indexOf("hr")>=0?parseInt(v.t)*60:parseInt(v.t)}
+function cylCard(){var l=S.level,c=l<20?"#e03131":l<45?"#f59f00":"#2f9e44",y=30+100*(1-l/100),st=l<20?"Low":l<45?"Getting low":"Healthy";
+return '<div class="card cyl"><svg viewBox="0 0 120 150" width="112" style="flex:none"><defs><clipPath id="cy"><rect x="20" y="30" width="80" height="106" rx="24"/></clipPath></defs><rect x="46" y="8" width="28" height="26" rx="7" fill="var(--line)"/><rect x="38" y="24" width="44" height="10" rx="5" fill="var(--muted)" opacity=".5"/><rect x="20" y="30" width="80" height="106" rx="24" fill="var(--bg)"/><g clip-path="url(#cy)"><g style="transform:translateY('+y+'px);transition:transform 1.2s ease"><path class="w1" d="M-80 0 q20 -9 40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 V130 H-80Z" fill="'+c+'" opacity=".75"/></g></g><rect x="20" y="30" width="80" height="106" rx="24" fill="none" stroke="var(--muted)" stroke-width="3" opacity=".6"/></svg><div><div class="pc" style="color:'+c+'">'+l+'%</div><p style="font-weight:700;margin:6px 0 2px">'+st+'</p><p class="muted">'+cap()+' kg cylinder<br>'+(l*cap()/100).toFixed(1)+' kg left</p></div></div>'}
+function quick(){return '<div class="qa"><button onclick="go(\'order\')"><span>'+IC.bag+'</span>Order</button><button onclick="go(\'wallet\')"><span>'+IC.wallet+'</span>Top up</button><button onclick="go(\'orders\')"><span>'+IC.box+'</span>Orders</button><button onclick="help()"><span>'+IC.help+'</span>Report</button></div>'}
+function track(o){var st=["Placed","Preparing","On the way","Delivered"],e=(Date.now()-o.t)/1000,ix=e<12?0:e<30?1:2,h='<div class="trk">';for(var i=0;i<4;i++){h+=(i?'<div class="l'+(i<=ix?' on':'')+'"></div>':'')+'<div class="d'+(i<=ix?' on':'')+'"></div>'}
+return h+'</div><div class="trl">'+st.map(function(x){return '<span>'+x+'</span>'}).join("")+'</div>'}
+var sort="near",qv="";
+function setSort(x){sort=x;render(true)}
+function vcard(v){var A=function(f){return vendors.map(f)},n=reports(v.n),q=rating(v),tg=matchTop(v)?"✨ Best match":v.p==Math.min.apply(null,A(function(x){return x.p}))?"💰 Best price":v.d==Math.min.apply(null,A(function(x){return x.d}))?"📍 Nearest":q.r==Math.max.apply(null,A(function(x){return rating(x).r}))?"⭐ Top rated":"";
+return '<div class="card"><div class="row" style="align-items:flex-start;cursor:pointer" onclick="openVendor('+v.id+')">'+pic(v,52)+'<div style="flex:1"><b>'+esc(v.n)+'</b>'+(tg?' <span class="pill" style="background:var(--accsoft);color:var(--acc)">'+tg+'</span>':'')+'<p class="muted"><span style="color:var(--gold)">★</span> '+q.r.toFixed(1)+' ('+q.n+') · '+vOrders(v).toLocaleString()+' orders</p><p class="muted">'+v.d+' km · '+v.t+(n?' · '+n+' report'+(n>1?'s':''):'')+'</p></div><div style="text-align:right"><b>'+m(v.pk)+'/kg</b><p class="muted">'+cap()+' kg: '+m(cost(v,cap()))+'</p></div></div><div class="row" style="margin-top:12px"><button class="btn ghost" style="flex:1" onclick="openVendor('+v.id+')">View profile</button><button class="btn" style="flex:1" onclick="order('+v.id+')">Order</button><button class="ic" aria-label="Save vendor" style="color:'+(isFav(v.id)?'var(--warn)':'var(--muted)')+'" onclick="toggleFav('+v.id+')">'+(isFav(v.id)?'♥':'♡')+'</button></div></div>'}
+function vlist(){var l=vendors.filter(function(v){return v.n.toLowerCase().indexOf(qv.toLowerCase())>=0&&(!favOnly||isFav(v.id))}).sort(function(a,b){return sort=="match"?matchScore(b)-matchScore(a):sort=="near"?a.d-b.d:sort=="rate"?rating(b).r-rating(a).r:sort=="price"?a.p-b.p:mins(a)-mins(b)});
+return l.length?l.map(vcard).join(""):'<div class="card" style="text-align:center"><p style="font-size:34px">🔍</p><p class="muted">No vendors match your search.</p></div>'}
+function orderNow(){return '<h2>Order now</h2><p class="muted">Wallet: <b>'+m(S.bal)+'</b>'+' · Prices are per kg'+'</p><div style="height:10px"></div><div class="kgbox"><input class="inp" id="qsi" placeholder="🔍 Search vendors" value="'+esc(qv)+'" oninput="qv=this.value;$(\'vl\').innerHTML=vlist()">'+(SR?'<button class="btn ghost" aria-label="Voice search" onclick="listen(\'qsi\',function(){qv=$(\'qsi\').value;$(\'vl\').innerHTML=vlist()})">🎤</button>':'')+'</div><div class="chips">'+[["match","✨ Best match"],["near","Nearest"],["rate","Top rated"],["price","Cheapest"],["fast","Fastest"]].map(function(x){return '<button class="chip'+(sort==x[0]?' on':'')+'" onclick="setSort(\''+x[0]+'\')">'+x[1]+'</button>'}).join("")+'<button class="chip'+(favOnly?' on':'')+'" onclick="toggleFavOnly()">♥ Saved</button></div><div id="vl">'+vlist()+'</div>'}
+setInterval(function(){if(S.user&&S.tab=="orders"&&S.orders.some(function(o){return o.st=="pending"}))render(true)},5000);
+function cu(){document.querySelectorAll("[data-v]").forEach(function(e){var to=parseFloat(e.dataset.v),t0=null;function f(ts){if(!t0)t0=ts;var p=Math.min(1,(ts-t0)/600);e.textContent=m(to*(1-Math.pow(1-p,3)));if(p<1)requestAnimationFrame(f)}requestAnimationFrame(f)})}
+function openVendor(id){S.vid=id;rs=5;go("vendor")}
+function pick(n){rs=n;for(var i=1;i<=5;i++){var b=$("st"+i);if(b){b.textContent=i<=n?"★":"☆";b.style.color=i<=n?"var(--gold)":"var(--muted)"}}}
+function sendReview(id){var t=$("rt").value.trim(),v=vendor(id);var ver=S.orders.some(function(o){return o.v==v.n&&o.st=="success"});
+S.reviews=S.reviews.filter(function(x){return x.vid!=id});S.reviews.unshift({id:Date.now(),vid:id,stars:rs,text:t,name:S.user.name,t:Date.now(),ver:ver});save();toast("Thanks for your review");render()}
+var vk=null;function setVk(id,k){vk={v:id,k:k};render(true)}
+function vendorPage(){var v=vendor(S.vid),q=rating(v),mine=userRev(v).filter(function(x){return x.name==S.user.name})[0],n=reports(v.n);
+var kg=(vk&&vk.v==v.id)?vk.k:cap(),gp=cost(v,kg),fe=dfee(gp),tt=gp+fe,sr=function(l,x,bd,id){return '<div class="sr"><span class="muted"'+(id?' id="'+id+'L"':'')+'>'+l+'</span><b'+(id?' id="'+id+'"':'')+(bd?' style="font-size:17px;color:var(--acc)"':'')+'>'+x+'</b></div>'};
+var info=function(l,x){return '<div class="row" style="padding:6px 0;border-top:1px solid var(--line);align-items:flex-start"><span class="muted">'+l+'</span><span style="text-align:right">'+esc(x)+'</span></div>'};
+var h=heroHTML(v,q)+
+'<div class="card"><b>Shop information</b><div style="height:6px"></div>'+info("Owner",v.own)+info("Address",v.a)+info("Hours",v.h)+info("Price per kg",m(v.pk))+info("Trading since",v.since)+info("Distance",v.d+" km · "+v.t)+info("Reports",n?n+' from customers':'None')+'</div>'+
+'<div class="card" id="odc"><b>Order details</b><p class="muted" style="margin:4px 0 8px">Choose a size or type your own amount'+(vendors.every(function(x){return x.pk>=v.pk})?' · 🏷️ Lowest price nearby':'')+'</p><div class="chips">'+[3,5,6,12.5,25,50].map(function(x){return '<button class="chip'+(x==kg?' on':'')+'" onclick="pickKg('+v.id+','+x+')">'+x+' kg</button>'}).join("")+'</div>'+kgBox(v.id,0,kg)+sr("Price per kg",m(v.pk))+sr("Quantity ordered",kg+" kg",0,"oq")+sr("Gas amount ("+kg+" kg x "+m(v.pk)+")",m(gp),0,"og")+sr("Delivery fee",m(fe),0,"of")+'<div style="border-top:1px solid var(--line);margin-top:6px"></div>'+sr("Total you will pay",m(tt),1,"ot")+'</div>'+
+'<button class="btn full" id="obtn" style="margin-bottom:12px" onclick="order('+v.id+','+kg+')">Order '+kg+' kg · '+m(tt)+'</button>'+
+'<div class="card"><b>'+(mine?'Update your review':'Rate this vendor')+'</b><div style="font-size:32px;margin:6px 0">'+[1,2,3,4,5].map(function(i){return '<button id="st'+i+'" onclick="pick('+i+')" style="background:none;border:0;font-size:32px;padding:0 4px;color:'+(i<=rs?'var(--gold)':'var(--muted)')+'">'+(i<=rs?'★':'☆')+'</button>'}).join("")+'</div><textarea class="inp" id="rt" rows="3" placeholder="Write a review (optional)">'+(mine?esc(mine.text):'')+'</textarea><button class="btn full" onclick="sendReview('+v.id+')">Submit review</button></div><h2>Reviews</h2>';
+userRev(v).forEach(function(x){h+='<div class="card"><div class="row"><b>'+esc(x.name)+' (you)</b>'+(x.ver?'<span class="pill" style="background:var(--accsoft);color:var(--ok)">Verified order</span>':'')+'</div><p style="color:var(--gold)">'+stars(x.stars)+'</p>'+(x.text?'<p>'+esc(x.text)+'</p>':'')+'<p class="muted">'+dt(x.t)+'</p></div>'});
+v.rv.forEach(function(x){h+='<div class="card"><b>'+x[0]+'</b><p style="color:var(--gold)">'+stars(x[1])+'</p><p>'+x[2]+'</p><p class="muted">'+x[3]+'</p></div>'});
+return h+'<button class="btn ghost full" onclick="help(\''+esc(v.n)+'\')">Report this vendor</button>'}
+function oc(o){ens(o);var col=o.st=="success"?'var(--ok)':o.st=="failed"?'var(--warn)':'var(--acc)',cb='<button class="btn ghost" onclick="openChat('+o.id+')">💬 '+(o.st=="pending"?'Chat':'Chat history')+'</button>';
+return '<div class="card"><div class="row"><b>'+esc(o.v)+'</b></div><p class="muted">'+(o.price?(o.kg?o.kg+' kg · ':'')+m(o.price)+(o.fee?' + '+m(o.fee)+' delivery fee':''):'Free')+' · '+dt(o.t)+' · '+o.eta+'</p>'+(o.st=="pending"?'<p class="muted">⏱ Time left <b class="tmr" data-e="'+o.exp+'" style="color:var(--text)">'+tl(o.exp-Date.now())+'</b> · 🔐 code required</p>'+track(o):'')+'<div class="row" style="margin-top:10px;flex-wrap:wrap">'+
+(o.st=="pending"?cb+'<button class="btn ghost" onclick="openCall('+o.id+')">📞 Call</button><button class="btn" onclick="openCode('+o.id+')">Delivered</button><button class="btn ghost" onclick="done('+o.id+',false)">Not delivered</button>':
+o.st=="failed"?'<span style="color:'+col+';font-weight:700">Not charged</span>'+cb+'<button class="btn ghost" onclick="help(\''+esc(o.v)+'\',\''+o.id+'\')">Dispute or report</button>'+(o.kg?'<button class="btn" onclick="reorder(\''+esc(o.v)+'\','+o.kg+')">🔁 Reorder</button>':''):
+'<span style="color:'+col+';font-weight:700">Completed</span>'+cb+'<button class="btn ghost" onclick="help(\''+esc(o.v)+'\',\''+o.id+'\')">Report issue</button>'+(o.kg?'<button class="btn ghost" onclick="receipt('+o.id+')">🧾 Receipt</button><button class="btn" onclick="reorder(\''+esc(o.v)+'\','+o.kg+')">🔁 Reorder</button>':''))+'</div></div>'}
+function orders(){var h='',g=[["pending","Pending"],["success","Successful"],["failed","Unsuccessful"]];
+g.forEach(function(x){var l=S.orders.filter(function(o){return o.st==x[0]});h+='<h2>'+x[1]+' ('+l.length+')</h2>'+(l.length?l.map(oc).join(""):'<div class="card muted" style="text-align:center">Nothing here yet</div>')});return h}
+var tm="bank",taVal="",ubk=0;
+var BANKS=[["GTBank","*737*2*{a}*{n}#"],["Access Bank","*901*{a}*{n}#"],["Zenith Bank","*966*{a}*{n}#"],["First Bank","*894*{a}*{n}#"],["UBA","*919*3*{n}*{a}#"],["Fidelity Bank","*770*{n}*{a}#"]];
+var DG="0123456789";
+function rnd(set,n){var o="",a=new Uint32Array(n),i;try{crypto.getRandomValues(a)}catch(e){for(i=0;i<n;i++)a[i]=Math.random()*4294967296}for(i=0;i<n;i++)o+=set[a[i]%set.length];return o}
+function mmss(ms){var t=Math.max(0,Math.floor(ms/1000));return Math.floor(t/60)+":"+("0"+t%60).slice(-2)}
+function cp(t){function fb(){var a=document.createElement("textarea");a.value=t;document.body.appendChild(a);a.select();try{document.execCommand("copy");toast("Copied")}catch(e){toast("Press and hold to copy")}a.remove()}try{navigator.clipboard.writeText(t).then(function(){toast("Copied")},fb)}catch(e){fb()}}
+function startTop(){var a=Math.round(parseFloat(taVal)||0);if(a<2000){toast("Minimum top up is ₦2,000");return}if(a>5000000){toast("Maximum top up is ₦5,000,000");return}
+var f=fee(a),t={id:Date.now(),m:tm,amt:a,fee:f,tot:a+f,st:"await",exp:Date.now()+30*60000,b:{bank:"Wema Bank",acct:"7"+rnd(DG,9),name:"GASBUDDY/"+S.user.name.toUpperCase().slice(0,20),ref:"GB"+rnd(DG,8)}};
+if(tm=="ussd")t.u={bank:BANKS[ubk][0],code:BANKS[ubk][1].replace("{a}",t.tot).replace("{n}",t.b.acct)};
+S.topup=t;save();hap();render(true)}
+function tfText(){var a=Math.round(parseFloat(taVal)||0);return a>=2000?'Service fee <b>'+m(fee(a))+'</b> · You pay <b>'+m(a+fee(a))+'</b>':'A '+feeNote()+' applies.'}
+function tfp(){var e=$("tf");if(e)e.innerHTML=tfText()}
+function cancelTop(){S.topup=null;save();render(true)}
+function paid(){S.topup.st="conf";S.topup.cs=Date.now();save();hap();render(true)}
+function creditTop(){var t=S.topup;if(!t)return;var l=t.m=="bank"?"Bank transfer":"USSD ("+t.u.bank+")";tx("Top up: "+l,t.amt,t.fee);S.topup=null;save();burst();toast(m(t.amt)+" added to your wallet");render(true)}
+function prog(t){var tot=4,c=Math.min(tot,Math.floor((Date.now()-t.cs)/1000));return{pct:c/tot*100,done:c>=tot,txt:"Verifying payment..."}}
+setInterval(function(){var t=S.topup;if(!t)return;if(t.st=="await"){var l=t.exp-Date.now(),e=$("cd");if(l<=0){S.topup=null;save();toast("Request expired");render(true)}else if(e)e.textContent=mmss(l)}else{var p=prog(t),b=$("pg"),n=$("cn");if(b)b.style.width=p.pct+"%";if(n)n.textContent=p.txt;if(p.done)creditTop()}},1000);
+function row(l,v){return '<div class="sr"><span class="muted">'+l+'</span><b style="text-align:right;word-break:break-all;max-width:62%">'+esc(v)+'</b></div>'}
+function rowC(l,v,c){return '<div class="sr"><span class="muted">'+l+'</span><span><b>'+esc(v)+'</b> <button class="chip" data-t="'+esc(c||v)+'" onclick="cp(this.dataset.t)">Copy</button></span></div>'}
+function payScreen(){var t=S.topup,title=t.m=="bank"?"Bank transfer":"USSD top up";
+var h='<div class="card"><div class="row"><b>'+esc(title)+'</b><span class="pill" style="background:var(--accsoft);color:var(--acc)">'+(t.st=="await"?"Awaiting payment":"Confirming")+'</span></div><p class="muted" style="margin-top:4px">Pay <b style="color:var(--text)">'+m(t.tot||t.amt)+'</b> ('+m(t.amt)+' + '+m(t.fee||0)+' service fee)'+(t.st=="await"?' · expires in <b id="cd">'+mmss(t.exp-Date.now())+'</b>':'')+'</p></div>';
+if(t.st=="conf"){var p=prog(t);return h+'<div class="card" style="text-align:center"><p style="font-size:38px">⏳</p><b>Confirming your payment</b><div class="bar" style="margin:14px 0"><i id="pg" style="width:'+p.pct+'%;background:var(--acc);transition:width 1s linear"></i></div><p class="muted" id="cn">'+p.txt+'</p></div>'}
+if(t.m=="bank")h+='<div class="card"><b>Transfer to this account</b>'+row("Bank",t.b.bank)+rowC("Account number",t.b.acct)+row("Account name",t.b.name)+row("Top up amount",m(t.amt))+row("Service fee",m(t.fee||0))+rowC("Total to pay",m(t.tot||t.amt),String(t.tot||t.amt))+row("Reference",t.b.ref)+'<p class="muted" style="margin-top:10px">Use any banking app. Your wallet is credited once the transfer is confirmed.</p></div>';
+if(t.m=="ussd")h+='<div class="card" style="text-align:center"><p class="muted">Dial this code on your phone ('+esc(t.u.bank)+')</p><p style="font-family:ui-monospace,monospace;font-size:20px;font-weight:800;margin:10px 0;word-break:break-all">'+esc(t.u.code)+'</p><div class="row"><button class="btn ghost" style="flex:1" data-t="'+esc(t.u.code)+'" onclick="cp(this.dataset.t)">Copy code</button><a class="btn" style="flex:1;text-align:center;text-decoration:none" href="tel:'+encodeURIComponent(t.u.code)+'">Dial now</a></div></div><div class="card"><b>Beneficiary</b>'+row("Bank",t.b.bank)+row("Account number",t.b.acct)+row("Account name",t.b.name)+'<p class="muted" style="margin-top:10px">Follow the prompts and enter your PIN. Codes follow each bank\u2019s usual transfer format, so check the confirmation screen before you pay.</p></div>';
+h+='<button class="btn full" onclick="paid()">I have paid</button><div class="row" style="margin-top:8px"><button class="btn ghost" style="flex:1" onclick="cancelTop()">Cancel</button></div>';return h}
+function wallet(){var h='<div class="wc"><div class="row"><b>Gas Buddy Wallet</b><span style="font-size:22px">🔥</span></div><p style="font-size:34px;font-weight:800;margin-top:22px" data-v="'+S.bal+'">'+m(S.bal)+'</p><div class="row" style="margin-top:14px;font-size:13px;opacity:.9"><span>'+esc(S.user.name)+'</span><span>'+S.user.id+'</span></div></div>';
+if(S.topup)return h+payScreen();
+h+='<div class="card"><b>Top up wallet</b><p class="muted" style="margin:2px 0 12px">Add naira using your preferred method.</p><div class="chips">'+[["bank","🏦 Bank transfer"],["ussd","📟 USSD"]].map(function(x){return '<button class="chip'+(tm==x[0]?' on':'')+'" onclick="tm=\''+x[0]+'\';render(true)">'+x[1]+'</button>'}).join("")+'</div><input class="inp" id="ta" type="number" inputmode="numeric" placeholder="Amount in ₦ (min ₦2,000)" value="'+esc(taVal)+'" oninput="taVal=this.value;tfp()"><div class="chips">'+[5000,10000,20000,50000].map(function(a){return '<button class="chip" onclick="taVal=\''+a+'\';$(\'ta\').value=\''+a+'\';tfp()">'+m(a)+'</button>'}).join("")+'</div><p class="muted" id="tf" style="margin:-2px 0 10px">'+tfText()+'</p>';
+if(tm=="ussd")h+='<select onchange="ubk=this.selectedIndex">'+BANKS.map(function(b,i){return '<option'+(i==ubk?' selected':'')+'>'+b[0]+'</option>'}).join("")+'</select>';
+h+='<button class="btn full" onclick="startTop()">Continue</button><p class="muted" style="margin-top:8px;text-align:center">Demo only: no real payment is taken.</p></div><h2>Transactions</h2>';
+if(!S.tx.length)h+='<p class="muted">No transactions yet.</p>';S.tx.forEach(function(t){h+='<div class="card row"><div><b>'+esc(t.l)+'</b><p class="muted">'+dt(t.t)+(t.f?' · '+m(t.f)+' service fee paid':'')+'</p></div><b style="color:'+(t.a>0?'var(--ok)':'var(--text)')+'">'+(t.a>0?'+':'−')+m(Math.abs(t.a))+'</b></div>'});return h}
+function smartTab(){svAuto();var h=smartPanel(),v=S.sv;
+if(!S.smart){
+if(!v)h+='<div class="card"><b>Get your smart valve</b><p class="muted" style="margin:4px 0 12px">Unlock live monitoring, leak detection, remote shut-off and auto-reorder.</p><button class="btn gold full" onclick="svSheet()">Get your smart valve</button></div>';
+else if(v.st=="pending")h+=svDetails(v)+svJourney(v);
+else h+=svDetails(v)+svJourney(v)+'<div class="card"><b>Your hardware ID</b><p style="font-family:ui-monospace,monospace;margin:8px 0">'+v.hw+'</p><button class="chip" data-t="'+v.hw+'" onclick="cp(this.dataset.t)">Copy</button><p class="muted" style="margin-top:8px">Enter this ID below to unlock your smart valve features.</p></div>'+linkCard();}
+
+return h}
+function profile(){var u=S.user;return alertCard()+'<div class="card"><div class="row"><div><b style="font-size:18px">'+esc(u.name)+'</b><p class="muted">'+u.id+' · Joined '+dt(u.joined)+'</p></div></div></div><div class="card"><b>Edit profile</b><div style="height:10px"></div>'+form(u)+'<button class="btn full" onclick="saveProfile()">Save</button></div><button class="btn ghost full" style="margin-bottom:10px" onclick="go(\'support\')">Disputes and vendor reports ('+S.cases.length+')</button><button class="btn ghost full" onclick="signout()">Sign out</button>'}
+function form(u){u=u||{name:"",phone:"",addr:"",cap:12.5};return '<input class="inp" id="sn" placeholder="Full name" value="'+esc(u.name)+'"><input class="inp" id="sp" type="tel" placeholder="Phone number" value="'+esc(u.phone)+'"><input class="inp" id="sa" placeholder="Delivery address" value="'+esc(u.addr)+'"><select id="sc">'+[3,5,6,12.5,25,50].map(function(c){return '<option value="'+c+'"'+(c==u.cap?' selected':'')+'>'+c+' kg cylinder</option>'}).join("")+'</select>'}
+function support(){var p=S.pre||{},h='<h2>Dispute or report</h2><div class="card"><p class="muted" style="margin-bottom:10px">Reports are reviewed by our team. Vendors are never blocked automatically, and you can still order from them.</p><select id="ck"><option value="Dispute"'+(p.o?' selected':'')+'>Dispute an order</option><option value="Report"'+(p.o?'':' selected')+'>Report a vendor</option></select><p class="muted" style="margin:4px 0">Vendor name</p><div class="kgbox"><input class="inp" id="cv" autocomplete="off" placeholder="Start typing the vendor name" value="'+esc(p.v||"")+'" oninput="vSuggest()" onfocus="vSuggest()">'+(SR?'<button class="btn ghost" aria-label="Speak vendor name" onclick="listen(\'cv\',vSuggest)">🎤</button>':'')+'</div><div id="csg"></div><select id="ct"><option>Late delivery</option><option>Wrong quantity</option><option>Overcharged</option><option>Unsafe or damaged cylinder</option><option>Rude behaviour</option><option>Other</option></select><textarea class="inp" id="cd" rows="4" placeholder="Describe what happened"></textarea><button class="btn full" onclick="sendCase()">Submit</button></div><h2>My cases ('+S.cases.length+')</h2>';
+if(!S.cases.length)h+='<p class="muted">No cases yet.</p>';S.cases.forEach(function(c){h+='<div class="card"><div class="row"><b>'+c.kind+': '+esc(c.vendor)+'</b><span class="pill" style="background:var(--accsoft);color:var(--acc)">Under review</span></div><p class="muted">'+esc(c.type)+' · '+dt(c.t)+'</p><p style="margin-top:6px">'+esc(c.d)+'</p></div>'});return h}
+/* ===== Marketplace shared by the customer and vendor apps ===== */
+var vsig="",vsig2="",vtab="home",vf="new",vcOpen=null,aRole=null,vlast=-1;
+function mkL(){try{return JSON.parse(localStorage.getItem("gb_market")||"null")||{vendors:[],jobs:[]}}catch(e){return{vendors:[],jobs:[]}}}
+function mkUpdL(fn){var m=mkL();fn(m);try{localStorage.setItem("gb_market",JSON.stringify(m))}catch(e){}return m}
+function mergeV(){for(var i=vendors.length-1;i>=0;i--)if(vendors[i].real)vendors.splice(i,1);mk().vendors.forEach(function(r){r.n=String(r.n||"").replace(/['"`\\<>&]/g,"").trim()||"Vendor";r.ph=String(r.ph||"").replace(/[^\d+ ()-]/g,"");r.c=/^#[0-9a-f]{3,8}$/i.test(r.c)?r.c:"#e8590c";r.e=String(r.e||"").replace(/[<>"'&]/g,"").slice(0,4)||"🏪";r.p=r.pk*12.5;var c=Object.assign({},r);delete c.ph;vendors.push(c)})}
+function jobOf(id){return mk().jobs.filter(function(j){return j.jid==id})[0]}
+function jobChat(id,f,x){mkUpd(function(m){m.jobs.forEach(function(j){if(j.jid==id)j.chat.push({f:f,x:x,t:Date.now()})})})}
+function pushJob(v,o){if(!v.real)return;o.jid=o.id;mkUpd(function(m){m.jobs.unshift({jid:o.id,type:"gas",cid:S.user.id,cname:S.user.name,caddr:S.user.addr,vid:v.id,v:v.n,kg:o.kg,price:o.price,fee:o.fee,st:"new",t:o.t,code:o.code,att:0,chat:[]})})}
+function custSync(){if(!S.user||S.user.role=="vendor")return;var m=mk(),ch=false,fin=[],cancel=[];
+var sig=JSON.stringify(m.vendors.map(function(v){return[v.id,v.pk,v.closed,v.h,v.ph,v.a]}));if(sig!==vsig){var first=vsig==="";vsig=sig;mergeV();if(!first)ch=true}
+S.orders.forEach(function(o){if(!o.jid)return;var j=m.jobs.filter(function(x){return x.jid==o.jid})[0];if(!j)return;
+if(o.st=="pending"){var c=j.chat||[];if(c.length!=(o.vn||0)){c.slice(o.vn||0).forEach(function(x){if(x.f=="v")o.chat.push(x)});o.vn=c.length;ch=true}
+o.att=j.att||0;if(o.vs!=j.st){o.vs=j.st;if(j.st=="accepted"){toast("✅ "+o.v+" accepted your order");ping("Order accepted",o.v+" is preparing your gas")}if(j.st=="out"){toast("🛵 Your gas is on the way");ping("On the way","Your gas is out for delivery")}ch=true}
+if(j.st=="declined"){o.st="failed";o.chat.push({f:"s",x:"The vendor declined this order. You were not charged.",t:Date.now()});toast("The vendor declined your order. You were not charged.");ch=true}
+else if(j.st=="delivered"){o.chat.push({f:"s",x:"✅ Vendor entered your secret code. Delivery confirmed.",t:Date.now()});fin.push(o.id)}}
+else if(o.st=="failed"&&(j.st=="new"||j.st=="accepted"||j.st=="out"))cancel.push(o.jid)});
+var sv=S.sv;if(sv&&sv.jid&&sv.st=="pending"){var j=m.jobs.filter(function(x){return x.jid==sv.jid})[0];if(j){if(j.st=="declined"){tx("Refund: smart valve declined",SV_VALVE+SV_FEAT);S.sv=null;toast("The vendor declined your smart valve order. You were refunded.");ch=true}else if(j.step>sv.step&&sv.step<3){for(var i=sv.step+1;i<=Math.min(j.step,3);i++)sv.ts[i]=Date.now();sv.step=Math.min(j.step,3);ch=true}}}
+if(cancel.length)mkUpd(function(mm){mm.jobs.forEach(function(j){if(cancel.indexOf(j.jid)>=0)j.st="cancelled"})});
+if(ch||fin.length){save();if(!fin.length)render(true)}fin.forEach(function(id){done(id,true)})}
+setInterval(function(){var a=document.activeElement;if(a&&(a.tagName=="INPUT"||a.tagName=="SELECT"))return;custSync()},2500);
+window.addEventListener("storage",function(e){if(e.key=="gb_market"){if(S.user&&S.user.role=="vendor")vPoll(true);else custSync()}});
+
+/* ===== Sign up: customer or vendor ===== */
+function setRole(r){aRole=r;render()}
+function hFmt(h){return(h%12||12)+(h<12?"am":"pm")}
+function hOpts(sel){var o="";for(var h=4;h<=23;h++)o+='<option value="'+h+'"'+(h==sel?" selected":"")+'>'+hFmt(h)+'</option>';return o}
+var lrole="customer",lph="";
+function pwFields(id){return '<p class="muted" style="margin:8px 0 4px">Create a password</p><div class="kgbox"><input class="inp" id="'+id+'" type="password" autocomplete="new-password" placeholder="At least 6 characters"><button class="btn ghost" onclick="togglePw(this,\''+id+'\')">Show</button></div><input class="inp" id="'+id+'2" type="password" autocomplete="new-password" placeholder="Confirm password">'}
+function togglePw(b,id){var a=$(id),c=$(id+"2"),t=a.type=="password"?"text":"password";a.type=t;c.type=t;b.textContent=t=="password"?"Show":"Hide"}
+function pwErr(id){var a=$(id).value,b=$(id+"2")?$(id+"2").value:a;if(a.length<6)return"Choose a password of at least 6 characters";if(a!==b)return"The passwords do not match";return""}
+function setLrole(r){var e=$("vlp");if(e)lph=e.value;lrole=r;authPage()}
+function lh(s){var h1=0xdeadbeef,h2=0x41c6ce57;for(var i=0;i<s.length;i++){var c=s.charCodeAt(i);h1=Math.imul(h1^c,2654435761);h2=Math.imul(h2^c,1597334677)}h1=Math.imul(h1^(h1>>>16),2246822507)^Math.imul(h2^(h2>>>13),3266489909);h2=Math.imul(h2^(h2>>>16),2246822507)^Math.imul(h1^(h1>>>13),3266489909);return(4294967296*(2097151&h2)+(h1>>>0)).toString(36)}
+function accts(){try{return JSON.parse(localStorage.getItem("gb_accts")||"[]")}catch(e){return[]}}
+function acctAdd(role,phone,pw){var a=accts(),salt=Math.random().toString(36).slice(2);a.push({id:S.user.id,role:role,phone:phone.replace(/\D/g,""),salt:salt,h:lh(salt+pw)});try{localStorage.setItem("gb_accts",JSON.stringify(a))}catch(e){}}
+function localReg(role,pEl,wEl,fn){var p=$(pEl).value.trim(),w=$(wEl)?$(wEl).value:"";var pe=pwErr(wEl);if(pe){toast(pe);return}if(accts().some(function(x){return x.phone==p.replace(/\D/g,"")})){toast("That phone number is already registered. Please log in.");return}var before=S.user;fn();if(S.user&&S.user!==before)acctAdd(role,p,w)}
+function localLogin(p,w){var d=p.replace(/\D/g,""),fk="gb_f_"+d,f={n:0,until:0};try{f=JSON.parse(localStorage.getItem(fk)||"null")||f}catch(e){}
+if(f.until>Date.now())return"Too many wrong attempts. Try again in "+Math.ceil((f.until-Date.now())/60000)+" minute(s).";
+var a=accts().filter(function(x){return x.phone==d})[0];if(!a||lh(a.salt+w)!==a.h){f.n++;if(f.n>=5){f.until=Date.now()+300000;f.n=0}try{localStorage.setItem(fk,JSON.stringify(f))}catch(e){}return"Wrong phone number or password. Please check and try again."}
+if(a.role!=lrole)return"This is a "+a.role+" account. Choose the "+(a.role=="vendor"?"Vendor":"Customer")+" tab.";var snap=null;try{snap=JSON.parse(localStorage.getItem("gb_u_"+a.id)||"null")}catch(e){}if(!snap||!snap.user)return"Account data was not found on this device.";
+try{localStorage.removeItem(fk)}catch(e){}S=Object.assign(defS(),snap);vtab="home";save();render();return""}
+function authPage(){if(!aRole)aRole="login";$("nav").innerHTML="";var hero='<div class="hero" style="background:linear-gradient(150deg,#e8590c,#7a1f5c);text-align:center;padding:28px 16px"><div style="font-size:54px">🔥</div><h1 style="margin:6px 0">Gas Buddy</h1><p style="opacity:.9">Know your gas. Never run out.</p></div>',b;
+var rc=function(r,e,t,d){return '<div class="card" style="cursor:pointer" onclick="setRole(\''+r+'\')"><div class="row" style="justify-content:flex-start;gap:14px"><div style="font-size:36px">'+e+'</div><div><b>'+t+'</b><p class="muted" style="font-size:13px">'+d+'</p></div></div></div>'};
+var back='<button class="chip" onclick="setRole(\'choose\')">Change</button>';
+if(!aRole||aRole=="choose")b='<h2>How will you use Gas Buddy?</h2>'+rc("customer","🧑","Sign up as a customer","Order gas, track deliveries and get a smart valve.")+rc("vendor","🏪","Sign up as a vendor","Sell gas, deliver to customers and handle smart valve orders.")+'<button class="btn ghost full" onclick="setRole(\'login\')">Log in</button>';
+else if(aRole=="customer")b='<div class="card"><div class="row"><b>Create your customer profile</b>'+back+'</div><div style="height:10px"></div>'+form()+pwFields("spw")+'<button class="btn full" onclick="signup()">Sign up</button></div>';
+else if(aRole=="vendor")b='<div class="card"><div class="row"><b>Create your vendor profile</b>'+back+'</div><div style="height:10px"></div><input class="inp" id="vn" placeholder="Shop name"><input class="inp" id="vo" placeholder="Owner full name"><input class="inp" id="vp" type="tel" placeholder="Phone number"><input class="inp" id="va" placeholder="Shop address"><input class="inp" id="vk" type="number" inputmode="numeric" placeholder="Your price per kg (₦)">'+pwFields("vpw")+'<p class="muted" style="margin:4px 0">Opening hours</p><div class="kgbox"><select id="vh1">'+hOpts(7)+'</select><select id="vh2">'+hOpts(20)+'</select></div><button class="btn full" style="margin-top:10px" onclick="vSignup()">Create vendor account</button></div>';
+else if(true)b='<div class="card"><b style="font-size:20px">Welcome back</b><div class="chips" style="margin:10px 0">'+[["customer","🧑 Customer"],["vendor","🏪 Vendor"]].map(function(x){return '<button class="chip'+(lrole==x[0]?' on':'')+'" onclick="setLrole(\''+x[0]+'\')">'+x[1]+'</button>'}).join("")+'</div><p class="muted" style="margin:0 0 12px">'+(lrole=="vendor"?"Vendor":"Customer")+' login: use your phone number and password.</p><input class="inp" id="vlp" type="tel" autocomplete="username" placeholder="'+(lrole=="vendor"?"Vendor":"Customer")+' phone number" value="'+esc(lph)+'" onkeydown="if(event.key==\'Enter\')$(\'vlw\').focus()"><div class="kgbox"><input class="inp" id="vlw" type="password" autocomplete="current-password" placeholder="Password" onkeydown="if(event.key==\'Enter\')vLogin()"><button class="btn ghost" onclick="var e=$(\'vlw\');e.type=e.type==\'password\'?\'text\':\'password\';this.textContent=e.type==\'password\'?\'Show\':\'Hide\'">Show</button></div><div id="lerr" role="alert"></div><button class="btn full" id="lbtn" onclick="vLogin()">Log in</button></div><div class="card row"><span class="muted">New to Gas Buddy?</span><button class="chip" onclick="setRole(\'choose\')">Create account</button></div>';
+else b='<div class="card"><div class="row"><b>Vendor log in</b>'+back+'</div><p class="muted" style="margin:6px 0 10px">Enter the phone number you registered with.</p><input class="inp" id="vlp" type="tel" placeholder="Phone number">'+'<button class="btn full" onclick="vLogin()">Log in</button></div>';
+$("app").innerHTML=hero+b}
+function vSignup(){var n=$("vn").value.trim(),o=$("vo").value.trim(),p=$("vp").value.trim(),a=$("va").value.trim(),k=Math.round(parseFloat($("vk").value)),h1=+$("vh1").value,h2=+$("vh2").value;
+if(!n||!o||!p||!a||!(k>=100)){toast("Fill in every field. Price per kg must be at least ₦100");return}if(h2<=h1){toast("Closing time must be after opening time");return}
+if(mk().vendors.some(function(v){return v.ph.replace(/\D/g,"")==p.replace(/\D/g,"")})){toast("That phone number is already registered. Use Vendor log in.");return}
+var id=1000+Math.floor(Math.random()*900000),cols=["#e8590c","#1c7ed6","#c92a2a","#2f9e44","#7048e8","#0c8599"],em=["🏪","🛢️","🔥","🏠"];
+var v={id:id,real:true,n:n,d:Math.round((0.5+Math.random()*2.5)*10)/10,r:4.5,rn:0,pk:k,t:["20 min","30 min","45 min"][Math.floor(Math.random()*3)],e:em[id%4],c:cols[id%6],a:a,h:hFmt(h1)+" to "+hFmt(h2),ph:p,since:new Date().getFullYear(),o:0,own:o,b:"New vendor on Gas Buddy.",rv:[],closed:false};
+mkUpd(function(m){m.vendors.push(v)});S.user={role:"vendor",id:"V-"+id,name:o,phone:p,addr:a,vid:id,joined:Date.now(),paid:0};vtab="home";save();render()}
+function vLogin(){var p=$("vlp").value.replace(/\D/g,""),v=mk().vendors.filter(function(x){return x.ph.replace(/\D/g,"")==p})[0];if(!p||!v){toast("No vendor account found for that number");return}
+S.user={role:"vendor",id:"V-"+v.id,name:v.own,phone:v.ph,addr:v.a,vid:v.id,joined:Date.now(),paid:v.paid||0};vtab="home";save();render()}
+
+/* ===== Vendor app ===== */
+function vMe(){return mk().vendors.filter(function(v){return v.id==S.user.vid})[0]}
+function vJobs(t){return mk().jobs.filter(function(j){return j.vid==S.user.vid&&(!t||j.type==t)})}
+function vgo(t){vtab=t;hap();vRender()}
+function vSet(id,patch,msg){mkUpd(function(m){m.jobs.forEach(function(j){if(j.jid==id){for(var k in patch)j[k]=patch[k];if(msg)j.chat.push({f:"v",x:msg,t:Date.now()})}})});hap();vsig2=mkSig();vRender()}
+function vAccept(id){vSet(id,{st:"accepted",at:Date.now()},"✅ Order accepted. I am preparing your gas.")}
+function vDecline(id){vSet(id,{st:"declined"})}
+function vOut(id){vSet(id,{st:"out"},"🛵 I am on my way to you now.")}
+function vValve(id,s){var p={step:s,st:"accepted"};if(s==1)p.at=Date.now();vSet(id,p)}
+function vCode(id){var j=jobOf(id),c=$("vc"+id).value.trim();if(!j||j.att>=3)return;if(c===j.code){vSet(id,{st:"delivered",dt:Date.now()});toast("Delivery confirmed. Payment added to your earnings.");burst()}else{vSet(id,{att:(j.att||0)+1});toast("Wrong code. "+(2-(j.att||0))+" attempts left")}}
+function vToggle(){var c;mkUpd(function(m){m.vendors.forEach(function(v){if(v.id==S.user.vid){v.closed=!v.closed;c=v.closed}})});hap();toast(c?"Shop closed. Customers cannot order.":"Shop open. You can receive orders.");vsig2=mkSig();vRender()}
+function vStore(){var k=Math.round(parseFloat($("sk").value)),h1=+$("sh1").value,h2=+$("sh2").value,p=$("sp2").value.trim(),a=$("sa2").value.trim(),b=$("sb2").value.trim();if(!(k>=100)||!p||!a){toast("Price must be at least ₦100 and phone and address are required");return}if(h2<=h1){toast("Closing time must be after opening time");return}
+mkUpd(function(m){m.vendors.forEach(function(v){if(v.id==S.user.vid){v.pk=k;v.ph=p;v.a=a;v.b=b||v.b;v.h=hFmt(h1)+" to "+hFmt(h2)}})});S.user.phone=p;S.user.addr=a;save();toast("Store updated. Customers see it now.");vsig2=mkSig();vRender()}
+function vPrev(){var k=parseFloat($("sk").value)||0;$("spv").innerHTML=[6,12.5,25,50].map(function(x){return '<div><b>'+m(Math.round(k*x))+'</b><span class="muted">'+x+' kg</span></div>'}).join("")}
+function vEarn(){var d=vJobs().filter(function(j){return j.st=="delivered"}),g=0,vl=0,fe=0;d.forEach(function(j){if(j.type=="gas"){g+=j.price;fe+=j.fee}else vl+=SV_VALVE});return{d:d,g:g,vl:vl,fe:fe,t:g+vl+fe}}
+function vBanks(){var v=vMe();return(v&&v.banks)||{}}
+function mask(n){return "•••• "+String(n).slice(-4)}
+var BL=BANKS.map(function(b){return b[0]}).concat(["Opay","Moniepoint","Kuda","Palmpay","Wema Bank","Sterling Bank","Union Bank","Stanbic IBTC"]);
+function vBankSheet(k){hap();var b=vBanks()[k]||{},nm=k=="p"?"primary":"secondary";
+$("sheet").innerHTML='<div class="ov" onclick="closeSheet()"></div><div class="sht"><div class="grab"></div><b style="font-size:18px">'+(b.no?"Change":"Link")+' '+nm+' bank</b><p class="muted" style="margin:4px 0 10px">'+(k=="p"?"Your primary bank is required. Withdrawals go here by default.":"Optional backup account for withdrawals.")+'</p><select id="bk">'+BL.map(function(x){return '<option'+(x==b.bank?' selected':'')+'>'+x+'</option>'}).join("")+'</select><input class="inp" id="bn" inputmode="numeric" maxlength="10" placeholder="10-digit account number" value="'+esc(b.no||"")+'"><input class="inp" id="bm" placeholder="Account name" value="'+esc(b.name||S.user.name)+'"><button class="btn full" onclick="vBankSave(\''+k+'\')">Save '+nm+' bank</button><button class="btn ghost full" style="margin-top:8px" onclick="closeSheet()">Cancel</button></div>'}
+function vBankSave(k){var bank=$("bk").value,no=$("bn").value.replace(/\D/g,""),nm=$("bm").value.trim(),o=vBanks();
+if(no.length!=10){toast("Account number must be 10 digits");return}if(nm.length<3){toast("Enter the account name");return}
+var other=o[k=="p"?"s":"p"];if(other&&other.no==no&&other.bank==bank){toast("Primary and secondary banks must be different accounts");return}
+mkUpd(function(m){m.vendors.forEach(function(v){if(v.id==S.user.vid){v.banks=v.banks||{};v.banks[k]={bank:bank,no:no,name:nm}}})});closeSheet();hap();toast((k=="p"?"Primary":"Secondary")+" bank linked");vsig2=mkSig();vRender()}
+function vBankRemove(){mkUpd(function(m){m.vendors.forEach(function(v){if(v.id==S.user.vid&&v.banks)delete v.banks.s})});toast("Secondary bank removed");vsig2=mkSig();vRender()}
+var wd="p";
+function vWithdraw(){var e=vEarn(),av=e.t-(S.user.paid||0),b=vBanks();if(!b.p){toast("Link your primary bank first");vBankSheet("p");return}if(av<=0){toast("Nothing to withdraw yet");return}wd="p";vWdSheet()}
+function vWdSheet(){var e=vEarn(),av=e.t-(S.user.paid||0),b=vBanks();
+$("sheet").innerHTML='<div class="ov" onclick="closeSheet()"></div><div class="sht"><div class="grab"></div><b style="font-size:18px">Withdraw '+m(av)+'</b><p class="muted" style="margin:4px 0 10px">Choose where to send it</p>'+["p","s"].filter(function(k){return b[k]}).map(function(k){return '<div class="card" style="margin:0 0 8px;cursor:pointer;border:2px solid '+(wd==k?'var(--acc)':'transparent')+'" onclick="wd=\''+k+'\';vWdSheet()"><div class="row"><div><b>'+esc(b[k].bank)+'</b><p class="muted" style="font-size:13px">'+mask(b[k].no)+' · '+esc(b[k].name)+'</p></div><span class="pill" style="background:var(--accsoft);color:var(--acc)">'+(k=="p"?"Primary":"Secondary")+'</span></div></div>'}).join("")+'<button class="btn full" style="margin-top:6px" onclick="vPay()">Withdraw '+m(av)+'</button><button class="btn ghost full" style="margin-top:8px" onclick="closeSheet()">Cancel</button></div>'}
+function vPay(){var e=vEarn(),av=e.t-(S.user.paid||0),b=vBanks()[wd];if(!b||av<=0)return;S.user.paid=e.t;mkUpd(function(m){m.vendors.forEach(function(v){if(v.id==S.user.vid)v.paid=e.t})});save();closeSheet();toast(m(av)+" sent to "+b.bank+" "+mask(b.no)+" (demo)");burst();vsig2=mkSig();vRender()}
+function vSend(id){var i=$("vci"),x=i.value.trim();if(!x)return;i.value="";jobChat(id,"v",x);vsig2=mkSig();vDrawChat(id)}
+function vQuick(id,x){jobChat(id,"v",x);vsig2=mkSig();vDrawChat(id)}
+function vDrawChat(id){var j=jobOf(id),e=$("vcm");if(!e||!j)return;e.innerHTML=(j.chat.length?j.chat:[{f:"s",x:"No messages yet."}]).map(function(x){return bub({f:x.f=="v"?"c":x.f=="c"?"v":"s",x:x.x})}).join("");e.scrollTop=e.scrollHeight}
+function vChat(id){var j=jobOf(id);vcOpen=id;var live=j.st=="new"||j.st=="accepted"||j.st=="out";
+$("sheet").innerHTML='<div class="ov" onclick="vCloseChat()"></div><div class="sht"><div class="grab"></div><div class="row"><b>'+esc(j.cname)+'</b><button class="btn ghost" onclick="vOpenCall('+id+')">📞 Call</button></div><p class="muted" style="margin:2px 0 8px">'+(live?'Chat with your customer about this order.':'This order has ended. Chat is closed.')+'</p><div class="cm" id="vcm"></div>'+(live?'<div class="chips" style="margin-top:8px">'+["On my way","Arriving in 10 minutes","Please confirm your address","I am at your gate"].map(function(q){return '<button class="chip" onclick="vQuick('+id+',\''+q+'\')">'+q+'</button>'}).join("")+'</div><div class="kgbox"><input class="inp" id="vci" placeholder="Type a message" onkeydown="if(event.key==\'Enter\')vSend('+id+')"><button class="btn" onclick="vSend('+id+')">Send</button></div>':'')+'<button class="btn ghost full" style="margin-top:8px" onclick="vCloseChat()">Close</button></div>';vDrawChat(id)}
+function vCloseChat(){vcOpen=null;closeSheet()}
+var VST={new:["New","#e8590c"],accepted:["Accepted","#1c7ed6"],out:["Out for delivery","#7048e8"],delivered:["Delivered","#2f9e44"],declined:["Declined","#868e96"],cancelled:["Cancelled by customer","#868e96"]};
+function vPill(s){var x=VST[s]||[s,"#868e96"];return '<span class="pill" style="background:'+x[1]+'22;color:'+x[1]+'">'+x[0]+'</span>'}
+function vInfo(j){return '<p class="muted" style="font-size:13px;margin:6px 0">📍 '+esc(j.caddr)+'</p>'}
+function vGas(j){var live=j.st=="new"||j.st=="accepted"||j.st=="out",a="";
+if(j.st=="new")a='<div class="row" style="gap:8px"><button class="btn" style="flex:1" onclick="vAccept('+j.jid+')">Accept</button><button class="btn ghost" style="flex:1" onclick="vDecline('+j.jid+')">Decline</button></div>';
+else if(j.st=="accepted")a='<button class="btn full" onclick="vOut('+j.jid+')">🛵 Out for delivery</button>';
+else if(j.st=="out")a=(j.att>=3?'<div class="alert">Too many wrong codes. This order is locked. Ask the customer to open a dispute.</div>':'<p class="muted" style="font-size:13px;margin-bottom:6px">Ask the customer for their 6-digit secret code once they have their gas.</p><div class="kgbox"><input class="inp code" id="vc'+j.jid+'" inputmode="numeric" maxlength="6" placeholder="••••••"><button class="btn" onclick="vCode('+j.jid+')">Confirm</button></div><p class="muted" style="font-size:12px">'+(3-(j.att||0))+' attempts left</p>');
+else if(j.st=="delivered")a='<p style="color:#2f9e44;font-weight:700">✓ Completed · +'+m(j.price+j.fee)+'</p>';
+return '<div class="card"><div class="row"><b>🛢️ '+j.kg+' kg refill</b>'+vPill(j.st)+'</div><p style="margin-top:4px"><b>'+esc(j.cname)+'</b> · '+dt(j.t)+'</p>'+vInfo(j)+'<div class="sr"><span class="muted">Gas ('+j.kg+' kg)</span><b>'+m(j.price)+'</b></div><div class="sr"><span class="muted">Delivery fee</span><b>'+m(j.fee)+'</b></div><div class="sr"><span class="muted">You earn</span><b style="color:var(--acc)">'+m(j.price+j.fee)+'</b></div><div style="height:10px"></div>'+a+(live?'<button class="btn ghost full" style="margin-top:8px" onclick="vChat('+j.jid+')">💬 Chat or call customer</button>':'')+'</div>'}
+function vValveCard(j){var s=j.step||0,a="",L=["Placed","Accepted","Picked up","Out for delivery","Delivered"];
+if(j.st=="delivered")a='<p style="color:#2f9e44;font-weight:700">✓ Delivered · +'+m(SV_VALVE)+'</p>';else if(j.st=="declined"||j.st=="cancelled")a="";
+else if(s==0)a='<div class="row" style="gap:8px"><button class="btn" style="flex:1" onclick="vValve('+j.jid+',1)">Accept</button><button class="btn ghost" style="flex:1" onclick="vDecline('+j.jid+')">Decline</button></div>';
+else if(s==1)a='<button class="btn full" onclick="vValve('+j.jid+',2)">📦 Valve picked up</button>';
+else if(s==2)a='<button class="btn full" onclick="vValve('+j.jid+',3)">🛵 Out for delivery</button>';
+else a='<p class="muted">Waiting for the customer to tap Delivered.</p>';
+return '<div class="card"><div class="row"><b>🛡️ Smart valve</b>'+vPill(j.st=="accepted"&&s>=3?"out":j.st)+'</div><p style="margin-top:4px"><b>'+esc(j.cname)+'</b> · '+dt(j.t)+'</p>'+vInfo(j)+'<div class="chips" style="margin:6px 0">'+L.map(function(x,i){return '<span class="pill" style="'+(i<=s&&j.st!="declined"?'background:var(--acc);color:#fff':'background:var(--bg);color:var(--muted)')+'">'+(i<s?'✓ ':'')+x+'</span>'}).join("")+'</div><div class="sr"><span class="muted">Valve hardware (yours)</span><b>'+m(SV_VALVE)+'</b></div><p class="muted" style="font-size:12px;margin:4px 0 10px">The '+m(SV_FEAT)+' smart features fee goes to Gas Buddy.</p>'+a+'</div>'}
+function vAuto(){var me=vMe();if(!me||!me.auto||me.closed)return;var any=false;mkUpd(function(m){m.jobs.forEach(function(j){if(j.vid==S.user.vid&&j.st=="new"){j.st="accepted";j.at=Date.now();if(j.type=="valve")j.step=1;else j.chat.push({f:"v",x:"✅ Order accepted automatically. I am preparing your gas.",t:Date.now()});any=true}})});if(any)toast("⚡ Auto-accepted new order")}
+function vnotify(){vAuto();var n=vJobs().filter(function(j){return j.st=="new"}).length;if(vlast>=0&&n>vlast){toast("🔔 New order request");chime();hap();ping("New order request","A customer just ordered from you")}vlast=n}
+function vAutoToggle(){var a;mkUpd(function(m){m.vendors.forEach(function(v){if(v.id==S.user.vid){v.auto=!v.auto;a=v.auto}})});toast(a?"Auto-accept on. New orders are accepted instantly.":"Auto-accept off");vsig2=mkSig();vRender()}
+function vStats(){var J=vJobs(),r=J.filter(function(j){return j.st!="new"&&j.st!="cancelled"}),ok=r.filter(function(j){return j.st!="declined"}),dl=J.filter(function(j){return j.st=="delivered"&&j.type=="gas"&&j.dt}),rs=J.filter(function(j){return j.at}),hrs={},cs={},bh="-";
+J.forEach(function(j){var h=new Date(j.t).getHours();hrs[h]=(hrs[h]||0)+1;cs[j.cid]=(cs[j.cid]||0)+1});var mx=0;for(var h in hrs)if(hrs[h]>mx){mx=hrs[h];bh=hFmt(+h)}
+return{acc:r.length?Math.round(ok.length/r.length*100)+"%":"-",ful:dl.length?Math.round(dl.reduce(function(a,j){return a+(j.dt-j.t)},0)/dl.length/60000)+" min":"-",rsp:rs.length?Math.round(rs.reduce(function(a,j){return a+(j.at-j.t)},0)/rs.length/1000)+" sec":"-",bh:bh,rep:Object.keys(cs).filter(function(k){return cs[k]>1}).length}}
+function vStatCard(){var s=vStats();return '<div class="card"><b>Performance</b><div class="stats" style="margin-top:10px"><div><b>'+s.acc+'</b><span class="muted">Acceptance</span></div><div><b>'+s.rsp+'</b><span class="muted">Avg response</span></div><div><b>'+s.ful+'</b><span class="muted">Avg delivery</span></div></div><div class="stats" style="margin-top:8px"><div><b>'+s.bh+'</b><span class="muted">Busiest hour</span></div><div><b>'+s.rep+'</b><span class="muted">Repeat customers</span></div></div></div>'}
+function vPoll(force){if(!S.user||S.user.role!="vendor")return;var a=document.activeElement;if(!force&&a&&(a.tagName=="INPUT"||a.tagName=="SELECT"))return;var s=mkSig();if(s===vsig2)return;vsig2=s;vnotify();if(vcOpen)vDrawChat(vcOpen);else if(!$("sheet").innerHTML.trim())vRender()}
+setInterval(function(){vPoll(false)},2000);
+function vBankCard(){var b=vBanks(),row=function(k,t,x){return '<div class="row" style="padding:10px 0;border-top:1px solid var(--line)"><div><span class="pill" style="background:var(--accsoft);color:var(--acc)">'+t+'</span>'+(x?'<p style="margin-top:6px"><b>'+esc(x.bank)+'</b> · '+mask(x.no)+'</p><p class="muted" style="font-size:13px">'+esc(x.name)+'</p>':'<p class="muted" style="margin-top:6px;font-size:13px">'+(k=="p"?"Required to withdraw":"Optional backup")+'</p>')+'</div><div style="display:flex;gap:6px"><button class="chip" onclick="vBankSheet(\''+k+'\')">'+(x?"Change":"Link")+'</button>'+(k=="s"&&x?'<button class="chip" onclick="vBankRemove()">Remove</button>':'')+'</div></div>'};
+return '<div class="card"><b>Payout banks</b>'+(b.p?'':'<div class="alert" style="margin:8px 0 0">Link your primary bank to start withdrawing.</div>')+row("p","Primary",b.p)+row("s","Secondary",b.s)+'</div>'}
+function vRender(){var v=vMe();if(!v){$("app").innerHTML='<div class="card"><b>Vendor account not found</b><p class="muted" style="margin:6px 0 10px">Your shop was removed from this device.</p><button class="btn full" onclick="doSignout()">Back to start</button></div>';$("nav").innerHTML="";return}
+var J=vJobs(),gj=J.filter(function(j){return j.type=="gas"}),vj=J.filter(function(j){return j.type=="valve"}),ng=gj.filter(function(j){return j.st=="new"}).length,nv=vj.filter(function(j){return j.st=="new"}).length;
+var T=[["home",IC.home,"Home",0],["vorders",IC.bag,"Orders",ng],["vvalves",IC.shield,"Valves",nv],["vearn",IC.coin,"Earnings",0],["vstore",IC.store,"Store",0]];
+$("nav").innerHTML=T.map(function(x){return '<button class="'+(vtab==x[0]?'on':'')+'" onclick="vgo(\''+x[0]+'\')"><span>'+x[1]+(x[3]?'<em>'+x[3]+'</em>':'')+'</span>'+x[2]+'</button>'}).join("");
+var h="",E=vEarn(),today=new Date().toDateString(),dj=E.d.filter(function(j){return new Date(j.dt||j.t).toDateString()==today});
+if(vtab=="home"){var td=0;dj.forEach(function(j){td+=j.type=="gas"?j.price+j.fee:SV_VALVE});var act=J.filter(function(j){return j.st=="accepted"||j.st=="out"}).length;
+h='<div class="hero" style="background:linear-gradient(150deg,'+v.c+',#7a1f5c)"><div class="row"><div><p style="opacity:.85;font-size:13px">Welcome back</p><h1 style="margin:2px 0">'+esc(v.n)+'</h1></div><div style="font-size:40px">'+v.e+'</div></div><div class="row" style="margin-top:14px"><span>'+(v.closed?'🔴 Closed to new orders':'🟢 Open for orders')+'</span><button class="chip" onclick="vToggle()">'+(v.closed?'Open shop':'Close shop')+'</button></div></div>'+alertCard()
++'<div class="card"><div class="stats"><div><b>'+(ng+nv)+'</b><span class="muted">New requests</span></div><div><b>'+act+'</b><span class="muted">In progress</span></div><div><b>'+m(td)+'</b><span class="muted">Earned today</span></div></div></div>';
+h+='<div class="card row"><div><b>⚡ Auto-accept orders</b><p class="muted" style="font-size:13px">Instantly accept new orders while your shop is open.</p></div><button class="chip'+(v.auto?' on':'')+'" onclick="vAutoToggle()">'+(v.auto?'On':'Off')+'</button></div>'+vStatCard();var nw=J.filter(function(j){return j.st=="new"});h+='<h2>Needs your attention</h2>';h+=nw.length?nw.map(function(j){return j.type=="gas"?vGas(j):vValveCard(j)}).join(""):'<div class="card"><p class="muted">No new requests. You will get a notification when a customer orders.</p></div>'}
+else if(vtab=="vorders"){var F=[["new","New"],["act","Active"],["done","Completed"],["all","All"]];var f=function(j){return vf=="all"||(vf=="new"&&j.st=="new")||(vf=="act"&&(j.st=="accepted"||j.st=="out"))||(vf=="done"&&(j.st=="delivered"||j.st=="declined"||j.st=="cancelled"))};
+h='<h2>Gas orders</h2><div class="chips">'+F.map(function(x){return '<button class="chip'+(vf==x[0]?' on':'')+'" onclick="vf=\''+x[0]+'\';vRender()">'+x[1]+'</button>'}).join("")+'</div>';var l=gj.filter(f);h+=l.length?l.map(vGas).join(""):'<div class="card"><p class="muted">Nothing here yet.</p></div>'}
+else if(vtab=="vvalves"){h='<h2>Smart valve orders</h2><p class="muted" style="margin-bottom:8px">Pick up the valve, deliver it, and earn '+m(SV_VALVE)+' per valve.</p>'+(vj.length?vj.map(vValveCard).join(""):'<div class="card"><p class="muted">No smart valve orders yet.</p></div>')}
+else if(vtab=="vearn"){var av=E.t-(S.user.paid||0),days=[],mx=1;for(var i=6;i>=0;i--){var d=new Date();d.setDate(d.getDate()-i);var ds=d.toDateString(),t=0;E.d.forEach(function(j){if(new Date(j.dt||j.t).toDateString()==ds)t+=j.type=="gas"?j.price+j.fee:SV_VALVE});mx=Math.max(mx,t);days.push([d.toLocaleDateString(undefined,{weekday:"short"}).slice(0,2),t])}
+h='<div class="hero" style="background:linear-gradient(150deg,#2f9e44,#0c8599)"><p style="opacity:.85">Available to withdraw</p><h1 style="margin:4px 0">'+m(av)+'</h1><button class="btn gold" onclick="vWithdraw()">Withdraw to bank</button></div>'+vBankCard()+'<div class="card"><b>Last 7 days</b><div style="display:flex;gap:8px;align-items:flex-end;height:110px;margin-top:12px">'+days.map(function(x){return '<div style="flex:1;text-align:center"><div style="height:'+Math.max(4,Math.round(x[1]/mx*84))+'px;background:var(--acc);border-radius:6px 6px 2px 2px;opacity:'+(x[1]?1:.25)+'"></div><span class="muted" style="font-size:11px">'+x[0]+'</span></div>'}).join("")+'</div></div><div class="card"><b>Breakdown</b><div class="sr"><span class="muted">Gas sales</span><b>'+m(E.g)+'</b></div><div class="sr"><span class="muted">Delivery fees</span><b>'+m(E.fe)+'</b></div><div class="sr"><span class="muted">Smart valves ('+E.d.filter(function(j){return j.type=="valve"}).length+')</span><b>'+m(E.vl)+'</b></div><div class="sr"><span class="muted">Total earned</span><b style="color:var(--acc)">'+m(E.t)+'</b></div><div class="sr"><span class="muted">Already withdrawn</span><b>'+m(S.user.paid||0)+'</b></div></div><h2>Recent deliveries</h2>'+(E.d.length?E.d.slice().sort(function(a,b){return(b.dt||b.t)-(a.dt||a.t)}).slice(0,10).map(function(j){return '<div class="card row"><div><b>'+(j.type=="gas"?j.kg+' kg refill':'Smart valve')+'</b><p class="muted" style="font-size:13px">'+esc(j.cname)+' · '+dt(j.dt||j.t)+'</p></div><b style="color:var(--acc)">+'+m(j.type=="gas"?j.price+j.fee:SV_VALVE)+'</b></div>'}).join(""):'<div class="card"><p class="muted">Completed orders show up here.</p></div>')}
+else{var hh=hrs(v.h);h='<h2>Your store</h2><div class="card"><div class="row" style="justify-content:flex-start;gap:12px;margin-bottom:8px">'+pic(v,48)+'<div><b>'+esc(v.n)+'</b><p class="muted" style="font-size:13px">ID '+esc(S.user.id)+' · '+esc(v.own)+'</p></div></div><p class="muted" style="margin:6px 0 4px">Price per kg (₦)</p><input class="inp" id="sk" type="number" inputmode="numeric" value="'+v.pk+'" oninput="vPrev()"><div class="stats" id="spv" style="margin:6px 0 10px"></div><p class="muted" style="margin:4px 0">Opening hours</p><div class="kgbox"><select id="sh1">'+hOpts(hh[0])+'</select><select id="sh2">'+hOpts(hh[1])+'</select></div><input class="inp" id="sp2" type="tel" placeholder="Phone" value="'+esc(v.ph)+'"><input class="inp" id="sa2" placeholder="Address" value="'+esc(v.a)+'"><input class="inp" id="sb2" placeholder="About your shop" value="'+esc(v.b)+'"><button class="btn full" onclick="vStore()">Save changes</button></div><button class="btn ghost full" onclick="signout()">Sign out</button>'}
+$("app").innerHTML=h;if(vtab=="vstore")vPrev()}
+
+/* ===== Modern features ===== */
+var SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+function listen(id,cb){if(!SR){toast("Voice input is not supported on this browser");return}try{var r=new SR();r.lang="en-NG";r.onstart=function(){toast("🎤 Listening…")};r.onresult=function(e){$(id).value=e.results[0][0].transcript;if(cb)cb()};r.onerror=function(){toast("Could not hear you. Try again.")};r.start()}catch(e){toast("Voice input is unavailable")}}
+function chime(){try{var c=new (window.AudioContext||window.webkitAudioContext)(),t=c.currentTime;[660,880].forEach(function(f,i){var o=c.createOscillator(),g=c.createGain();o.frequency.value=f;o.connect(g);g.connect(c.destination);g.gain.setValueAtTime(.0001,t+i*.16);g.gain.exponentialRampToValueAtTime(.25,t+i*.16+.02);g.gain.exponentialRampToValueAtTime(.0001,t+i*.16+.3);o.start(t+i*.16);o.stop(t+i*.16+.32)})}catch(e){}}
+function ping(t,b){try{if(window.Notification&&Notification.permission=="granted"&&document.hidden)new Notification(t,{body:b})}catch(e){}}
+function askNotif(){if(!window.Notification){toast("Notifications are not supported here");return}Notification.requestPermission().then(function(p){toast(p=="granted"?"Alerts on. You will be notified.":"Alerts blocked in your browser settings");render(true)})}
+function alertCard(){return(window.Notification&&Notification.permission=="default")?'<div class="card row"><div><b>🔔 Turn on alerts</b><p class="muted" style="font-size:13px">Get notified about order updates, even when the app is in the background.</p></div><button class="btn" onclick="askNotif()">Enable</button></div>':''}
+window.addEventListener("offline",function(){var b=document.getElementById("offb");if(b)b.style.display="block"});window.addEventListener("online",function(){var b=document.getElementById("offb");if(b)b.style.display="none";toast("Back online")});
+function lev(a,b){var d=[],i,j;for(i=0;i<=a.length;i++){d[i]=[i]}for(j=0;j<=b.length;j++)d[0][j]=j;for(i=1;i<=a.length;i++)for(j=1;j<=b.length;j++)d[i][j]=Math.min(d[i-1][j]+1,d[i][j-1]+1,d[i-1][j-1]+(a[i-1]==b[j-1]?0:1));return d[a.length][b.length]}
+function vMatch(q){q=q.trim().toLowerCase();if(!q)return vendors.slice().sort(function(a,b){return a.d-b.d}).slice(0,5);
+return vendors.map(function(v){var n=v.n.toLowerCase(),w=n.split(/\s+/),s=0;if(n.indexOf(q)==0)s=100;else if(n.indexOf(q)>0)s=80;else if(w.some(function(x){return x.indexOf(q)==0}))s=75;else if(q.length>=3){var d=Math.min.apply(null,w.concat([n]).map(function(x){return lev(q,x.slice(0,q.length))}));if(d<=Math.ceil(q.length/3))s=55-d*10}return[v,s]}).filter(function(x){return x[1]>0}).sort(function(a,b){return b[1]-a[1]}).slice(0,5).map(function(x){return x[0]})}
+function vSuggest(){var e=$("csg"),q=$("cv").value,exact=vendors.filter(function(v){return v.n.toLowerCase()==q.trim().toLowerCase()})[0];if(!e)return;if(exact){e.innerHTML='<p style="color:#2f9e44;font-weight:600;font-size:14px;margin:2px 0 8px">✓ '+esc(exact.n)+'</p>';return}
+var l=vMatch(q);e.innerHTML=l.length?'<div class="card" style="margin:0 0 10px;padding:6px">'+(q.trim()?'':'<p class="muted" style="font-size:12px;padding:6px 10px 0">Nearby vendors</p>')+l.map(function(v){return '<div class="row" style="padding:10px;cursor:pointer;border-radius:12px" onclick="pickV('+v.id+')"><div class="row" style="justify-content:flex-start;gap:10px">'+pic(v,34)+'<div><b>'+esc(v.n)+'</b><p class="muted" style="font-size:12px">'+v.d+' km · ⭐ '+rating(v).r.toFixed(1)+'</p></div></div><span class="muted">Select</span></div>'}).join("")+'</div>':'<p class="muted" style="font-size:13px;margin:2px 0 8px">No vendor matches that name.</p>'}
+function pickV(id){var v=vendor(id);$("cv").value=v.n;vSuggest();hap()}
+function matchScore(v){var mp=Math.min.apply(null,vendors.map(function(x){return x.p})),md=Math.min.apply(null,vendors.map(function(x){return x.d})),s=40*(mp/v.p)+30*(md/v.d)+30*(rating(v).r/5)-10*reports(v.n);return v.closed?s-100:s}
+function matchTop(v){return vendors.every(function(x){return matchScore(x)<=matchScore(v)})}
+
+/* ===== Database mode: talks to the Gas Buddy server when it is reachable ===== */
+var DB=false,TOKEN="",MKC={vendors:[],jobs:[]},MKSIG="",MKW=0,dbT=null,API=(location.protocol.indexOf("http")==0&&location.hostname!="")?"":"http://localhost:3000";
+function mkSig(){return DB?MKSIG:(localStorage.getItem("gb_market")||"")}
+function api(method,path,body,keep){return fetch(API+path,{method:method,keepalive:!!keep,headers:{"Content-Type":"application/json",Authorization:"Bearer "+TOKEN},body:body?JSON.stringify(body):undefined}).then(function(r){return r.json().then(function(j){if(r.status==401&&TOKEN&&path.indexOf("/auth")<0){dbLogout();toast("Please log in again")}return{ok:r.ok,status:r.status,j:j}})}).catch(function(){return{ok:false,status:0,j:{error:"Cannot reach the server"}}})}
+function defS(){return{tab:"home",user:null,level:68,hist:[5,7,4,6,5,6,0],orders:[],bal:0,tx:[],maint:[],cases:[],pre:{},smart:null,sv:null,fav:[],reviews:[],ai:{},theme:S.theme||"auto",topup:null}}
+function mk(){return DB?JSON.parse(MKSIG||'{"vendors":[],"jobs":[]}'):mkL()}
+function mkUpd(fn){if(!DB)return mkUpdL(fn);var m=JSON.parse(JSON.stringify(MKC)),bv={},bj={},ops=[];MKC.vendors.forEach(function(v){bv[v.id]=JSON.stringify(v)});MKC.jobs.forEach(function(j){bj[j.jid]=JSON.stringify(j)});fn(m);
+m.vendors.forEach(function(v){if(bv[v.id]!==JSON.stringify(v))ops.push({k:"vendor",rec:v})});m.jobs.forEach(function(j){if(bj[j.jid]!==JSON.stringify(j))ops.push({k:"job",rec:j})});MKC=m;MKSIG=JSON.stringify(m);
+if(ops.length){MKW++;api("POST","/api/market/ops",{ops:ops}).then(function(r){MKW--;if(!r.ok)toast(r.j.error||"Update failed");mkPoll()})}return m}
+function mkPoll(){if(!DB||!TOKEN||!S.user||MKW>0)return Promise.resolve();return api("GET","/api/market").then(function(r){if(r.ok&&MKW==0){var s=JSON.stringify(r.j);if(s!==MKSIG){MKC=r.j;MKSIG=s}}})}
+setInterval(mkPoll,2000);
+function flushState(now){if(!DB||!TOKEN||!S.user)return;api("PUT","/api/state",{state:S},now)}
+function dbLogout(){DB&&flushState(true);TOKEN="";try{localStorage.removeItem("gb_token")}catch(e){}MKC={vendors:[],jobs:[]};MKSIG="";S=defS();mergeV();render()}
+function enter(j){TOKEN=j.token;try{localStorage.setItem("gb_token",TOKEN)}catch(e){}S=Object.assign(defS(),j.state||{});var u=j.user;
+if(!S.user||S.user.role!=u.role||(u.role=="vendor"&&S.user.vid!=j.vendor.id))S.user=u.role=="vendor"?{role:"vendor",id:"V-"+j.vendor.id,name:u.name,phone:u.phone,addr:j.vendor.a,vid:j.vendor.id,joined:Date.now(),paid:0}:{id:u.id,name:u.name,phone:u.phone,addr:"",cap:12.5,joined:Date.now()};
+if(u.role=="customer")S.user.id=u.id;S.user.uid=u.id;vtab="home";return mkPoll().then(function(){mergeV();save();render()})}
+function loginErr(t){var e=$("lerr");if(e)e.innerHTML='<div style="background:#fff0f0;color:#c92a2a;border-radius:12px;padding:10px 12px;font-weight:600;font-size:14px;margin:0 0 10px;animation:shake .4s">⚠️ '+esc(t)+'</div>';var w=$("vlw");if(w)w.value="";hap()}
+function dbLogin(){var p=$("vlp").value.trim(),w=$("vlw")?$("vlw").value:"";lph=p;if(!p||!w){loginErr("Enter your phone number and password");return}if(!DB){var er=localLogin(p,w);if(er)loginErr(er);return}var b=$("lbtn");if(b){b.disabled=true;b.textContent="Checking…"}
+api("POST","/api/auth/login",{phone:p,password:w}).then(function(r){if(b){b.disabled=false;b.textContent="Log in"}if(!r.ok){loginErr(r.status==401?"Wrong phone number or password. Please check and try again.":r.j.error);return}if(r.j.user.role!=lrole){loginErr("This is a "+r.j.user.role+" account. Choose the "+(r.j.user.role=="vendor"?"Vendor":"Customer")+" tab.");return}enter(r.j)})}
+vLogin=function(){dbLogin()};
+var _su=signup;signup=function(){if(!DB)return localReg("customer","sp","spw",_su);var n=$("sn").value.trim(),p=$("sp").value.trim(),a=$("sa").value.trim(),c=parseFloat($("sc").value),w=$("spw")?$("spw").value:"";if(!n||!p||!a){toast("Please fill in all fields");return}var pe=pwErr("spw");if(pe){toast(pe);return}
+api("POST","/api/auth/signup",{role:"customer",name:n,phone:p,addr:a,cap:c,password:w}).then(function(r){if(!r.ok){toast(r.j.error);return}enter(r.j).then(function(){S.user.addr=a;S.user.cap=c;save();render()})})};
+var _vs=vSignup;vSignup=function(){if(!DB)return localReg("vendor","vp","vpw",_vs);var n=$("vn").value.trim(),o=$("vo").value.trim(),p=$("vp").value.trim(),a=$("va").value.trim(),k=Math.round(parseFloat($("vk").value)),h1=+$("vh1").value,h2=+$("vh2").value,w=$("vpw")?$("vpw").value:"";
+if(!n||!o||!p||!a||!(k>=100)){toast("Fill in every field. Price must be at least ₦100");return}var pe=pwErr("vpw");if(pe){toast(pe);return}if(h2<=h1){toast("Closing time must be after opening time");return}
+api("POST","/api/auth/signup",{role:"vendor",name:o,phone:p,password:w,shop:{n:n,a:a,pk:k,h:hFmt(h1)+" to "+hFmt(h2)}}).then(function(r){if(!r.ok){toast(r.j.error);return}enter(r.j)})};
+var _vc=vCode;vCode=function(id){if(!DB)return _vc(id);var c=$("vc"+id).value.trim();api("POST","/api/jobs/"+id+"/code",{code:c}).then(function(r){if(!r.ok)toast(r.j.error);else if(r.j.ok){toast("Delivery confirmed. Payment added to your earnings.");burst()}else toast("Wrong code. "+(3-r.j.att)+" attempts left");mkPoll().then(function(){vRender()})})};
+var _hs=hwStock;hwStock=function(id){_hs(id);if(DB)api("POST","/api/hw/register",{hw:id})};
+var _lh=linkHw;linkHw=function(){if(!DB)return _lh();var raw=$("hwi").value.trim().toUpperCase();api("POST","/api/hw/activate",{hw:raw}).then(function(r){if(!r.ok){toast(r.j.error);return}_lh()})};
+document.addEventListener("visibilitychange",function(){if(document.hidden)flushState(true)});
+function boot(){applyTheme();$("app").innerHTML='<div class="sk" style="height:64px;margin-bottom:12px"></div><div class="sk" style="height:180px;margin-bottom:12px"></div><div class="sk" style="height:96px"></div>';$("nav").innerHTML="";var ctl=window.AbortController?new AbortController():null,to=setTimeout(function(){ctl&&ctl.abort()},1500);
+fetch(API+"/health",{signal:ctl&&ctl.signal}).then(function(r){return r.json()}).then(function(j){clearTimeout(to);if(!j.ok)throw 0;DB=true;TOKEN=localStorage.getItem("gb_token")||"";S=defS();
+if(!TOKEN){render();return}return api("GET","/api/me").then(function(r){if(!r.ok){TOKEN="";render();return}r.j.token=TOKEN;return enter(r.j)})}).catch(function(){clearTimeout(to);DB=false;mergeV();render()})}
+
+function render(k){if(!S.user){authPage();return}if(S.user.role=="vendor"){vRender();return}
+var pc=S.orders.filter(function(o){return o.st=="pending"}).length,t=S.tab,P={home:home,order:orderNow,orders:orders,wallet:wallet,smart:smartTab,profile:profile,support:support,vendor:vendorPage};
+$("app").innerHTML='<div class="top"><div><h1 class="brand"><i class="mk">'+IC.flame+'</i>Gas Buddy</h1><p class="muted">Hi '+esc(S.user.name.split(" ")[0])+' · '+m(S.bal)+'</p></div><div class="row" style="gap:8px"><button class="ic" aria-label="Toggle theme" onclick="theme()">'+(isDark()?IC.sun:IC.moon)+'</button><button class="av" aria-label="Profile" onclick="go(\'profile\')">'+esc(S.user.name[0].toUpperCase())+'</button></div></div>'+P[t]();
+$("app").className=k?"nk":"";var T=[["home",IC.home,"Home"],["order",IC.bag,"Order Now"],["orders",IC.box,"Orders"],["wallet",IC.wallet,"Wallet"],["smart",IC.shield,"Smart"]];
+$("nav").innerHTML=T.map(function(x){return '<button class="'+(t==x[0]||(t=="vendor"&&x[0]=="order")?'on':'')+'" onclick="go(\''+x[0]+'\')"><span>'+x[1]+(x[0]=="orders"&&pc?'<em>'+pc+'</em>':'')+'</span>'+x[2]+'</button>'}).join("");if(!k){window.scrollTo(0,0);cu()}}
+function trust(v){var q=rating(v),mins=v.t.indexOf("hr")>=0?parseInt(v.t)*60:parseInt(v.t),c=function(x){return Math.max(0,Math.min(100,x))};
+var p=[["Reliability",c(q.r/5*100)],["Experience",c(vOrders(v)/5000*100)],["Value",c(100-(v.p-14000)/45)],["Speed",c(100-mins*1.1)],["Safety",c(100-reports(v.n)*20)]];
+return{s:Math.round(p[0][1]*.35+p[1][1]*.15+p[2][1]*.15+p[3][1]*.15+p[4][1]*.2),p:p}}
+function heroHTML(v,q){var T=trust(v);return '<button class="btn ghost" onclick="go(\'order\')">‹ Back</button><div class="hero" style="background:linear-gradient(150deg,'+v.c+' 0%,#1b1030 125%)"><div class="row" style="align-items:flex-start"><div style="display:flex;gap:12px;align-items:center">'+pic(v,64)+'<div><b style="font-size:19px">'+esc(v.n)+'</b><p style="opacity:.9;font-size:13px">★ '+q.r.toFixed(1)+' · '+q.n+' ratings</p><p style="opacity:.9;font-size:13px">'+vOrders(v).toLocaleString()+' orders · since '+v.since+'</p></div></div><div class="ring"><svg viewBox="0 0 64 64" width="64" height="64"><circle cx="32" cy="32" r="28" fill="none" stroke="rgba(255,255,255,.25)" stroke-width="6"/><circle cx="32" cy="32" r="28" fill="none" stroke="#fff" stroke-width="6" stroke-linecap="round" stroke-dasharray="176" style="stroke-dashoffset:'+(176*(1-T.s/100)).toFixed(1)+';transform:rotate(-90deg);transform-origin:center;animation:rg 1.1s ease-out"/></svg><b>'+T.s+'</b><span>TRUST</span></div></div><p style="margin-top:12px;opacity:.92;font-size:14px">'+esc(v.b)+'</p></div><div class="card"><b>Trust breakdown</b>'+T.p.map(function(x){return '<div class="tb"><span>'+x[0]+'</span><div><i style="width:'+x[1].toFixed(0)+'%"></i></div><b>'+x[1].toFixed(0)+'</b></div>'}).join("")+'</div>'}
+function cfm(t,m,l,fn){hap();$("sheet").innerHTML='<div class="ov" onclick="closeSheet()"></div><div class="sht" role="dialog" aria-modal="true"><div class="grab"></div><div class="cf-t">'+t+'</div><p class="muted" style="margin:6px 0 16px">'+m+'</p><button class="btn danger full" onclick="'+fn+'">'+l+'</button><button class="btn ghost full" style="margin-top:8px" onclick="closeSheet()">Keep it</button></div>'}
+var _vd=vDecline;vDecline=function(id){cfm("Decline this order?","The customer will be told you declined. You cannot undo this.","Decline order","vDeclineDo("+id+")")};function vDeclineDo(id){closeSheet();_vd(id)}
+var _vbr=vBankRemove;vBankRemove=function(){cfm("Remove secondary bank?","You can link it again later.","Remove bank","vBankRemoveDo()")};function vBankRemoveDo(){closeSheet();_vbr()}
+document.addEventListener("keydown",function(e){if(e.key=="Escape"&&$("sheet").innerHTML.trim()){cOpen=null;vcOpen=null;closeSheet()}});
+/* ===== WebRTC calling: audio between PROFILES, signalled over WebSocket (see signal-server.js). Phone numbers are never used. ===== */
+var SIGURL=window.GB_SIGNAL||((location.protocol.indexOf("http")==0&&location.hostname?(location.protocol=="https:"?"wss://":"ws://")+location.host:"ws://localhost:8787")),sig=null,sigId="",sigBack=2000,sigAt=0,CALL=null,CALLX=null;
+function myPid(){var u=S&&S.user;return !u?"":u.role=="vendor"?"V-"+u.vid:String(u.id||"")}
+function sigOpen(){return !!(sig&&sig.ready&&sig.readyState==1)}
+function sigSend(o){if(!sigOpen())return false;sig.send(JSON.stringify(o));return true}
+function sigEnsure(){var id=vfGated()?"":myPid();if(sig&&sigId!=id){var o=sig;sig=null;sigAt=0;o.close()}
+if(!id||sig||Date.now()<sigAt)return;sigId=id;var w;
+try{w=new WebSocket(SIGURL+"/?id="+encodeURIComponent(id)+"&token="+encodeURIComponent(typeof TOKEN=="string"?TOKEN:""))}catch(e){sigAt=Date.now()+sigBack;return}
+sig=w;w.onmessage=function(e){var m;try{m=JSON.parse(e.data)}catch(x){return}if(m.type=="ready"){w.ready=true;sigBack=2000;return}callMsg(m)};
+w.onclose=function(e){if(sig!==w)return;sig=null;sigAt=e.code==4000?Infinity:Date.now()+sigBack;sigBack=Math.min(sigBack*2,60000);if(CALL)callEnd("Connection to the calling service was lost",false)}}
+setInterval(sigEnsure,1500);
+function callId(){return "c"+Date.now().toString(36)+Math.random().toString(36).slice(2,8)}
+function myName(){var u=S.user;if(u.role=="vendor"){var v=vMe();return(v&&v.n)||u.name}return u.name}
+function micMsg(e){var n=e&&e.name;return n=="NotAllowedError"?"Microphone access was blocked. Allow it in your browser settings to make calls.":n=="NotFoundError"?"No microphone was found on this device.":"Couldn’t start the microphone."}
+function getMic(){if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia)return Promise.reject({name:"NotFoundError"});return navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true}})}
+function iceCfg(){return fetch(SIGURL.replace(/^ws/,"http")+"/ice").then(function(r){return r.json()}).then(function(j){return j.iceServers}).catch(function(){return[{urls:"stun:stun.l.google.com:19302"}]})}
+function newPc(C){return iceCfg().then(function(ice){var pc=new RTCPeerConnection({iceServers:ice,iceTransportPolicy:window.GB_RELAY_ONLY?"relay":"all"});
+pc.onicecandidate=function(e){if(e.candidate&&CALL===C)sigSend({type:"ice",callId:C.id,data:e.candidate})};
+pc.ontrack=function(e){var a=$("callAudio");if(a){a.srcObject=e.streams[0];var q=a.play();if(q&&q.catch)q.catch(function(){})}};
+pc.onconnectionstatechange=function(){if(CALL!==C)return;var st=pc.connectionState;
+if(st=="connected"&&C.st!="live"){C.st="live";C.t0=Date.now();callUI()}
+else if(st=="failed")callEnd("The call couldn’t connect. A TURN relay may be needed on this network.");
+else if(st=="disconnected")setTimeout(function(){if(CALL===C&&pc.connectionState=="disconnected")callEnd("Call connection lost")},8000)};
+return pc})}
+function callGo(side,id){var peer,name,ctx={side:side,id:id};
+if(side=="c"){var o=getO(id),v=o&&vByName(o.v);if(!v||!v.real){callUI({st:"ended",name:o?o.v:"Vendor",msg:"This vendor isn’t on in-app calling yet.",ctx:ctx,req:true});return}peer="V-"+v.id;name=o.v}
+else{var j=jobOf(id);if(!j||!j.cid){callUI({st:"ended",name:j?j.cname:"Customer",msg:"This customer can’t be reached in the app.",ctx:ctx,req:true});return}peer=String(j.cid);name=j.cname}
+callStart(peer,name,ctx)}
+function callStart(peer,name,ctx){if(CALL){toast("You’re already on a call");return}
+if(!sigOpen()){callUI({st:"ended",name:name,msg:"The calling service isn’t reachable right now.",ctx:ctx,req:true});return}
+var C=CALL={id:callId(),peer:peer,name:name,dir:"out",st:"calling",queue:[],ctx:ctx};callUI();
+getMic().then(function(m){if(CALL!==C){m.getTracks().forEach(function(t){t.stop()});return}C.stream=m;
+sigSend({type:"invite",callId:C.id,to:peer,order:ctx.id,data:{name:myName()}});
+C.timer=setTimeout(function(){if(CALL===C&&C.st=="calling")callEnd("No answer",true,true)},40000)}).catch(function(e){callEnd(micMsg(e),false)})}
+function callAccept(){var C=CALL;if(!C||C.st!="ringing")return;clearTimeout(C.timer);C.st="connecting";callUI();
+getMic().then(function(m){if(CALL!==C){m.getTracks().forEach(function(t){t.stop()});return}C.stream=m;return newPc(C).then(function(pc){C.pc=pc;m.getTracks().forEach(function(t){pc.addTrack(t,m)});sigSend({type:"accept",callId:C.id})})}).catch(function(e){sigSend({type:"decline",callId:C.id,data:{reason:"mic"}});CALL=null;callUI({st:"ended",name:C.name,msg:micMsg(e)})})}
+function callDecline(){var C=CALL;if(!C)return;clearTimeout(C.timer);sigSend({type:"decline",callId:C.id});CALL=null;callUI(null)}
+function callMute(){var C=CALL;if(!C||!C.stream)return;C.muted=!C.muted;C.stream.getAudioTracks().forEach(function(t){t.enabled=!C.muted});callUI()}
+function callEnd(msg,hang,fb){var C=CALL;if(!C)return;CALL=null;clearTimeout(C.timer);if(hang!==false)sigSend({type:"hangup",callId:C.id,data:{reason:msg}});
+if(C.stream)C.stream.getTracks().forEach(function(t){t.stop()});if(C.pc)try{C.pc.close()}catch(e){}
+var d="";if(C.t0&&msg=="Call ended"){var n=Math.floor((Date.now()-C.t0)/1000);d=" · "+Math.floor(n/60)+":"+("0"+n%60).slice(-2)}
+callUI({st:"ended",name:C.name,msg:msg+d,ctx:C.ctx,req:!!(fb&&C.ctx)})}
+function flushIce(C){var q=C.queue.splice(0);q.forEach(function(c){C.pc.addIceCandidate(c).catch(function(){})})}
+function callMsg(m){var C=CALL;
+if(m.type=="invite"){if(C){sigSend({type:"decline",callId:m.callId,data:{reason:"busy"}});return}
+C=CALL={id:m.callId,peer:m.from,name:(m.data&&m.data.name)||"Gas Buddy user",dir:"in",st:"ringing",queue:[]};callUI();
+if(navigator.vibrate)navigator.vibrate([200,100,200]);C.timer=setTimeout(function(){if(CALL===C&&C.st=="ringing")callDecline()},45000);return}
+if(!C||m.callId!=C.id)return;var r=m.reason||(m.data&&m.data.reason)||"";
+if(m.type=="hangup"){callEnd(r=="unavailable"?"They’re not available in the app right now":r=="busy"?"They’re on another call":r=="not-allowed"?"This call isn’t allowed":r=="disconnected"?"They lost connection":C.st=="ringing"?"Missed call":"Call ended",false,r=="unavailable"||r=="busy")}
+else if(m.type=="decline")callEnd(r=="busy"?"They’re on another call":"Call declined",false,true);
+else if(m.type=="accept"){clearTimeout(C.timer);C.st="connecting";callUI();newPc(C).then(function(pc){C.pc=pc;C.stream.getTracks().forEach(function(t){pc.addTrack(t,C.stream)});return pc.createOffer()}).then(function(o){return C.pc.setLocalDescription(o)}).then(function(){sigSend({type:"offer",callId:C.id,data:C.pc.localDescription})}).catch(function(){callEnd("The call couldn’t be set up")})}
+else if(m.type=="offer"&&C.pc){C.pc.setRemoteDescription(m.data).then(function(){flushIce(C);return C.pc.createAnswer()}).then(function(a){return C.pc.setLocalDescription(a)}).then(function(){sigSend({type:"answer",callId:C.id,data:C.pc.localDescription})}).catch(function(){callEnd("The call couldn’t be set up")})}
+else if(m.type=="answer"&&C.pc){C.pc.setRemoteDescription(m.data).then(function(){flushIce(C)}).catch(function(){callEnd("The call couldn’t be set up")})}
+else if(m.type=="ice"){if(C.pc&&C.pc.remoteDescription)C.pc.addIceCandidate(m.data).catch(function(){});else C.queue.push(m.data)}}
+function callTick(){var C=CALL,t=$("callT");if(C&&C.st=="live"&&t){var n=Math.floor((Date.now()-C.t0)/1000);t.textContent=Math.floor(n/60)+":"+("0"+n%60).slice(-2)}}
+setInterval(callTick,1000);
+function callAskReq(){var c=CALLX&&CALLX.ctx;callUI(null);if(c)c.side=="c"?callReq(c.id):vCallReq(c.id)}
+function callUI(o){if(o===undefined)o=CALL;var el=$("call");
+if(!o){if(el)el.remove();CALLX=null;var a0=$("callAudio");if(a0)a0.srcObject=null;return}
+CALLX=o;if(!$("callAudio")){var au=document.createElement("audio");au.id="callAudio";au.autoplay=true;au.setAttribute("playsinline","");document.body.appendChild(au)}
+var st=o.st,lab={calling:"Calling…",ringing:"Incoming call",connecting:"Connecting…",live:"0:00",ended:o.msg||"Call ended"}[st]||"",
+btn=function(t,fn,bg){return '<button class="btn" style="min-width:128px;background:'+bg+';color:#fff;border:0" onclick="'+fn+'">'+t+'</button>'},ac;
+if(st=="ringing")ac=btn("Decline","callDecline()","#c92a2a")+btn("Accept","callAccept()","#2f9e44");
+else if(st=="live")ac=btn(o.muted?"Unmute":"Mute","callMute()","rgba(255,255,255,.2)")+btn("End","callEnd(\'Call ended\')","#c92a2a");
+else if(st=="ended")ac=(o.req?btn("Send call request","callAskReq()","#e8590c"):"")+btn("Close","callUI(null)","rgba(255,255,255,.2)");
+else ac=btn("End","callEnd(\'Call ended\')","#c92a2a");
+if(!el){el=document.createElement("div");el.id="call";el.className="cl";el.setAttribute("role","dialog");el.setAttribute("aria-modal","true");el.tabIndex=-1;document.body.appendChild(el)}
+el.setAttribute("aria-label","Call with "+o.name);
+el.innerHTML='<div><div class="cav">'+esc((o.name||"?").charAt(0).toUpperCase())+'</div><div style="font-size:24px;font-weight:700">'+esc(o.name)+'</div><p id="callT" '+(st=="live"?'aria-live="off"':'role="status"')+' style="opacity:.85;margin-top:6px;font-variant-numeric:tabular-nums">'+esc(lab)+'</p><p style="opacity:.6;font-size:12.5px;margin-top:14px">In-app call · phone numbers stay private</p></div><div class="ca">'+ac+'</div>';
+if(el.dataset.st!=st){var f=el.querySelector("button");if(f)f.focus()}el.dataset.st=st;callTick()}
+function callSheet(av,name,go,chat){$("sheet").innerHTML='<div class="ov" onclick="closeSheet()"></div><div class="sht" style="text-align:center"><div class="grab"></div><div style="display:grid;place-items:center;margin:4px 0 10px">'+av+'</div><b style="font-size:18px">'+esc(name)+'</b><p class="muted" style="margin:2px 0 12px">In-app call · phone numbers stay private</p>'+(sigOpen()?'':'<p style="font-size:12.5px;text-align:left;padding:8px 10px;border-radius:10px;background:var(--accsoft);color:var(--text);margin:0 0 12px">The calling service is offline, so a call can’t connect right now. You can still send a call request.</p>')+'<button class="btn full" onclick="closeSheet();'+go+'">Start call</button><button class="btn ghost full" style="margin-top:8px" onclick="'+chat+'">Open chat</button><button class="btn ghost full" style="margin-top:8px" onclick="closeSheet()">Cancel</button></div>'}
+function openCall(id){var o=getO(id);if(!o)return;cOpen=null;var v=vByName(o.v);callSheet(v?pic(v,64):"",o.v,"callGo(\'c\',"+id+")","openChat("+id+")")}
+function callReq(id){var o=getO(id);if(!o||o.st!="pending")return;var x="Call request: please call me in the app.";o.chat.push({f:"c",x:x,t:Date.now()});save();
+if(o.jid)jobChat(o.jid,"c",x);else setTimeout(function(){if(o.st!="pending")return;o.chat.push({f:"v",x:"Noted. I’ll call you in the app shortly.",t:Date.now()});save();if(cOpen==id)drawChat(o)},1200);
+toast("Call request sent");hap();openChat(id)}
+function vOpenCall(id){var j=jobOf(id);if(!j)return;vcOpen=null;callSheet('<div style="width:64px;height:64px;border-radius:50%;display:grid;place-items:center;background:var(--accsoft);color:var(--acc);font-size:26px;font-weight:700">'+esc((j.cname||"?").charAt(0).toUpperCase())+'</div>',j.cname,"callGo(\'v\',"+id+")","vChat("+id+")")}
+function vCallReq(id){var j=jobOf(id);if(!j)return;jobChat(id,"v","Call request: I’d like to call you in the app.");vsig2=mkSig();toast("Call request sent");hap();vChat(id)}
+/* ===== Phone verification (DEMO: any code verifies; no SMS is sent) ===== */
+var vfT=0,vfEnd=0,vfMem=[];
+function dig(p){return String(p||"").replace(/\D/g,"")}
+function pend(){try{return JSON.parse(localStorage.getItem("gb_pv")||"[]")}catch(e){return vfMem}}
+function pendSet(a){vfMem=a;try{localStorage.setItem("gb_pv",JSON.stringify(a))}catch(e){}}
+function pendAdd(p){var a=pend();if(p&&a.indexOf(p)<0){a.push(p);pendSet(a)}}
+function pendDel(p){pendSet(pend().filter(function(x){return x!=p}))}
+function vfGated(){return !!(S&&S.user&&pend().indexOf(dig(S.user.phone))>-1)}
+var _lr=localReg;localReg=function(role,pf,pwf,fn){var p=dig(($(pf)||{}).value),had=accts().some(function(a){return a.phone==p});if(!had)pendAdd(p);var r=_lr.apply(this,arguments);if(!had&&!accts().some(function(a){return a.phone==p}))pendDel(p);return r};
+var _api=api;api=function(m,path,b){var r=_api.apply(this,arguments);if(path=="/api/auth/signup"&&b)return r.then(function(x){if(x&&x.ok)pendAdd(dig(b.phone));return x});return r};
+var _rd=render;render=function(k){if(vfGated()){if(!$("vfc"))vfPage();return}return _rd.apply(this,arguments)};
+var _vr=vRender;vRender=function(){if(vfGated()){if(!$("vfc"))vfPage();return}return _vr.apply(this,arguments)};
+function vfTick(){var b=$("vfr"),s=Math.ceil((vfEnd-Date.now())/1000);if(!b){clearInterval(vfT);return}if(s>0){b.disabled=true;b.textContent="Resend code in "+s+"s"}else{b.disabled=false;b.textContent="Resend code";clearInterval(vfT)}}
+function vfStart(){vfEnd=Date.now()+30000;clearInterval(vfT);vfT=setInterval(vfTick,1000);vfTick()}
+function vfResend(){toast("Demo: no SMS is sent. Enter any code.");hap();vfStart();var c=$("vfc");if(c)c.focus()}
+function vfGo(){var c=$("vfc"),e=$("vfe");if(!c.value.trim()){e.textContent="Enter the code to continue.";c.setAttribute("aria-invalid","true");c.focus();hap();return}
+pendDel(dig(S.user.phone));clearInterval(vfT);vfEnd=0;hap();toast("Phone number verified");render()}
+function vfPage(){var u=S.user,ph=String(u.phone||""),k=Math.max(0,ph.length-3),mask=ph.slice(0,k).replace(/\d/g,"•")+ph.slice(k),v=u.role=="vendor";
+$("nav").innerHTML="";$("app").className="";
+$("app").innerHTML='<div class="hero" style="background:linear-gradient(150deg,#e8590c,#7a1f5c);text-align:center;padding:28px 16px"><span class="vfi">'+IC.shield+'</span><h1 style="margin:6px 0">Verify your phone number</h1><p style="opacity:.9">We sent a code to <b>'+esc(mask)+'</b></p></div>'
++'<div class="card"><b>Enter your verification code</b><p class="muted" style="font-size:13px;margin:4px 0 10px" id="vfd">'+(v?"Confirm your phone number to secure your vendor account before you start receiving orders.":"Confirm your phone number to keep your account and orders secure.")+'</p><p id="vfn" style="font-size:12.5px;margin:0 0 12px;padding:8px 10px;border-radius:10px;background:var(--accsoft);color:var(--text)"><b>Demo mode:</b> no SMS is sent, and any code will verify your number.</p>'
++'<input class="inp vfc" id="vfc" inputmode="numeric" autocomplete="one-time-code" maxlength="8" placeholder="Enter code" aria-label="Verification code" aria-describedby="vfd vfn vfe" oninput="this.value=this.value.replace(/\\D/g,\'\');this.removeAttribute(\'aria-invalid\');$(\'vfe\').textContent=\'\'" onkeydown="if(event.key===\'Enter\')vfGo()">'
++'<p class="vfe" id="vfe" role="alert"></p><button class="btn full" onclick="vfGo()">Verify and continue</button>'
++'<div style="display:grid;gap:8px;margin-top:10px"><button class="btn ghost" id="vfr" onclick="vfResend()">Resend code</button><button class="btn ghost" onclick="doSignout()">Use a different account</button></div></div>';
+if(!vfEnd)vfStart();else{clearInterval(vfT);vfT=setInterval(vfTick,1000);vfTick()}
+setTimeout(function(){var c=$("vfc");if(c)c.focus()},60)}
+/* ===== v4 accessibility layer ===== */
+(function(){var opener=null,wasOpen=false,q=0;
+function lab(e){var b=e.closest&&e.closest(".card"),t=b&&b.querySelector("b");return e.getAttribute("placeholder")||(t&&t.textContent)||""}
+function fix(){q=0;
+document.querySelectorAll("[onclick]").forEach(function(e){if(/^(BUTTON|A|INPUT|SELECT)$/.test(e.tagName)||e.classList.contains("ov"))return;if(!e.hasAttribute("role"))e.setAttribute("role","button");if(!e.hasAttribute("tabindex"))e.tabIndex=0});
+document.querySelectorAll("input:not([aria-label]),select:not([aria-label]),textarea:not([aria-label])").forEach(function(e){var l=lab(e);if(l)e.setAttribute("aria-label",l)});
+for(var i=1;i<=5;i++){var b=$("st"+i);if(b)b.setAttribute("aria-label",i+(i==1?" star":" stars"))}
+document.querySelectorAll("#nav button").forEach(function(b){if(b.classList.contains("on"))b.setAttribute("aria-current","page");else b.removeAttribute("aria-current")});
+var sh=document.querySelector("#sheet .sht");
+if(sh&&!sh.hasAttribute("role")){if(!wasOpen)opener=document.activeElement;sh.setAttribute("role","dialog");sh.setAttribute("aria-modal","true");var t=sh.querySelector("b");if(t)sh.setAttribute("aria-label",t.textContent);sh.tabIndex=-1;sh.focus({preventScroll:true})}
+if(!sh&&wasOpen&&opener&&document.body.contains(opener))try{opener.focus({preventScroll:true})}catch(e){}
+wasOpen=!!sh}
+new MutationObserver(function(){if(!q)q=requestAnimationFrame(fix)}).observe(document.body,{childList:true,subtree:true});
+document.addEventListener("keydown",function(e){var a=document.activeElement;
+if((e.key=="Enter"||e.key==" ")&&a&&a.getAttribute&&a.getAttribute("role")=="button"&&!/^(BUTTON|A)$/.test(a.tagName)){e.preventDefault();a.click();return}
+if(e.key=="Tab"){var sh=document.querySelector("#sheet .sht");if(!sh)return;var f=[].slice.call(sh.querySelectorAll("button,a[href],input,select,textarea,[tabindex='0']")).filter(function(x){return !x.disabled&&x.offsetParent});if(!f.length)return;var F=f[0],L=f[f.length-1];if(e.shiftKey&&(a==F||a==sh)){e.preventDefault();L.focus()}else if(!e.shiftKey&&a==L){e.preventDefault();F.focus()}}});
+fix()})();
+boot();
+</script></body></html>
